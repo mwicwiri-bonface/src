@@ -1,0 +1,163 @@
+{% extends 'customer/layouts/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+<!-- Home Banner -->
+<section class="section section-search">
+	<div class="container-fluid">
+		<div class="banner-wrapper">
+			<div class="banner-header text-center">
+				<h1>Search Salonist, Make an Appointment</h1>
+				<p>Discover the best salonist and hairstyle.</p>
+			</div>
+
+			<!-- Search -->
+			<div class="search-box">
+				<form action="{% url 'home:search' %}" method="get">
+<!--					<div class="form-group search-location">-->
+<!--						<input type="text" class="form-control" placeholder="Search Location">-->
+<!--						<span class="form-text">Based on your Location</span>-->
+<!--					</div>-->
+					<div class="form-group search-info">
+						<input type="text" class="form-control" name="search" placeholder="Search Salonist, hairstyle & products">
+						<span class="form-text">Ex : Twist or Wig</span>
+					</div>
+					<button type="submit" class="btn btn-primary search-btn"><i class="fas fa-search"></i> <span>Search</span></button>
+				</form>
+			</div>
+			<!-- /Search -->
+
+		</div>
+	</div>
+</section>
+<!-- /Home Banner -->
+<!-- Popular Section -->
+<section class="section section-doctor">
+	<div class="container-fluid">
+	   <div class="row">
+			<div class="col-lg-12">
+				<div class="doctor-slider slider">
+					{% for object in object_list %}
+					<!-- Service Widget -->
+					<div class="profile-widget">
+						<div class="doc-img">
+							<a href="#">
+								<img class="img-fluid" alt="User Image" src="{{object.image.url}}" style="height: 200px; object-fit: cover;">
+							</a>
+							<a href="javascript:void(0)" class="fav-btn">
+								<i class="far fa-bookmark"></i>
+							</a>
+						</div>
+						<div class="pro-content">
+							<h3 class="title">
+								<a href="#">{{object.name}}</a>
+								<i class="fas fa-check-circle verified"></i>
+							</h3>
+							<p class="speciality">{{object.description}}</p>
+							<div class="row row-sm">
+								<div class="col-6">
+									<a href="#" class="btn view-btn">View Service</a>
+								</div>
+								<div class="col-6">
+									<a href="{% url 'customer:add_booking' slug=object.id %}" class="btn book-btn">Book Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /Service Widget -->
+					{% endfor %}
+				</div>
+			</div>
+	   </div>
+	</div>
+</section>
+<!-- /Popular Section -->
+<!-- Popular Section -->
+<section class="section section-doctor">
+	<div class="container-fluid">
+	   <div class="row">
+			<div class="col-lg-12">
+				<div class="doctor-slider slider">
+					{% for object in products %}
+					<!-- Product Widget -->
+					<div class="profile-widget">
+						<div class="doc-img">
+							<a href="#">
+								<img class="img-fluid" alt="User Image" src="{{object.image.url}}" style="height: 200px; object-fit: cover;">
+							</a>
+							<a href="{% url 'customer:add_to_wishlist' slug=object.slug %}" class="fav-btn" title="Add To Wishlist">
+								<i class="far fa-heart"></i>
+							</a>
+						</div>
+						<div class="pro-content">
+							<h3 class="title">
+								<a href="#">{{object.name}}</a>
+								<i class="fas fa-check-circle verified"></i>
+							</h3>
+							<p class="speciality">Ksh {{object.price|floatformat:2|intcomma}}</p>
+							<div class="row row-sm">
+								<div class="col-6">
+									<button data-url="{% url 'customer:add_to_cart' slug=object.slug %}" data-slug="{{object.slug}}" class="btn view-btn add-to-cart-btn" id="{{object.slug}}">Add to cart</button>
+								</div>
+								<div class="col-6">
+									<a href="#" class="btn book-btn">View</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /Product Widget -->
+					{% endfor %}
+
+				</div>
+			</div>
+	   </div>
+	</div>
+</section>
+<!-- /Popular Section -->
+
+<!--&lt;!&ndash; Availabe Features &ndash;&gt;-->
+<!--<section class="section section-features">-->
+<!--	<div class="container-fluid">-->
+<!--	   <div class="row">-->
+<!--			<div class="col-md-12 ">-->
+<!--				<div class="section-header">-->
+<!--					<h2 class="mt-2">Available Hairstyles</h2>-->
+<!--					<p>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. </p>-->
+<!--				</div>-->
+<!--				<div class="features-slider slider">-->
+<!--					&lt;!&ndash; Slider Item &ndash;&gt;-->
+<!--					<div class="feature-item text-center">-->
+<!--						<img src="{% static 'customer/assets/img/features/feature-01.jpg' %}" class="img-fluid" alt="Feature">-->
+<!--						<p>Twists</p>-->
+<!--					</div>-->
+<!--					&lt;!&ndash; /Slider Item &ndash;&gt;-->
+
+<!--					&lt;!&ndash; Slider Item &ndash;&gt;-->
+<!--					<div class="feature-item text-center">-->
+<!--						<img src="{% static 'customer/assets/img/features/feature-02.jpg' %}" class="img-fluid" alt="Feature">-->
+<!--						<p>Afro baby</p>-->
+<!--					</div>-->
+<!--					&lt;!&ndash; /Slider Item &ndash;&gt;-->
+
+<!--					&lt;!&ndash; Slider Item &ndash;&gt;-->
+<!--					<div class="feature-item text-center">-->
+<!--						<img src="{% static 'customer/assets/img/features/feature-03.jpg' %}" class="img-fluid" alt="Feature">-->
+<!--						<p>Wig</p>-->
+<!--					</div>-->
+<!--					&lt;!&ndash; /Slider Item &ndash;&gt;-->
+
+<!--					&lt;!&ndash; Slider Item &ndash;&gt;-->
+<!--					<div class="feature-item text-center">-->
+<!--						<img src="{% static 'customer/assets/img/features/feature-04.jpg' %}" class="img-fluid" alt="Feature">-->
+<!--						<p>Weave</p>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
+<!--	   </div>-->
+<!--	</div>-->
+<!--</section>-->
+<!--&lt;!&ndash; Availabe Features &ndash;&gt;-->
+{% endblock content %}
+{% block scripts %}
+<script src="{% static 'customer/assets/js/custom.js' %}"></script>
+{% endblock scripts %}

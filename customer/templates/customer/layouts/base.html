@@ -1,0 +1,45 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+		{% load static %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+		<title>Salon</title>
+		{% include 'customer/includes/styles.html' %}
+		{% block styles %}
+		{% endblock styles %}
+	<script>
+    	function getToken(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getToken('csrftoken');
+  	</script>
+	</head>
+	<body>
+
+		<!-- Main Wrapper -->
+		<div class="main-wrapper">
+			{% include 'customer/includes/header.html' %}
+			<!-- /Header -->
+			{% include 'includes/messages.html' %}
+			{% block content %}{% endblock content%}
+			{% include 'customer/includes/footer.html' %}
+	   </div>
+	   <!-- /Main Wrapper -->
+		{% include 'customer/includes/scripts.html' %}
+	  	{% block scripts %}
+		{% endblock scripts %}
+	</body>
+</html>

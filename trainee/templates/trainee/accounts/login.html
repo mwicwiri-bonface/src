@@ -1,0 +1,32 @@
+{% extends 'trainee/layout/base-auth.html' %}
+{% load static %}
+{% block title %} Login {% endblock %}
+{% block h1 %} Login {% endblock %}
+{% block p %} access trainee portal {% endblock %}
+{% block content %}
+<!-- Form -->
+<form method="post" action="./?next={{ request.GET.next }}">
+	{% csrf_token %}
+	<div class="form-group">
+		<input type="email" class="form-control" name="username" placeholder="Email">
+	</div>
+	<div class="form-group">
+		<input type="password" class="form-control" name="password" placeholder="Password">
+	</div>
+	<div class="form-group">
+		<button class="btn btn-primary btn-block" type="submit">Login</button>
+	</div>
+	<div class="form-group">
+		<div class="custom-control custom-checkbox">
+		  <input type="hidden" name="next" value="{{ request.GET.next }}"/>
+		  <input type="checkbox" name="remember" class="custom-control-input" tabindex="3" id="remember-me" value="remember-me">
+		  <label class="custom-control-label" for="remember-me">Remember Me</label>
+		</div>
+  	</div>
+</form>
+<!-- /Form -->
+
+<div class="text-center forgotpass"><a href="#">Forgot Password?</a></div>
+
+<div class="text-center dont-have">Don’t have an account? <a href="{% url 'trainee:register' %}">Register</a></div>
+{% endblock %}

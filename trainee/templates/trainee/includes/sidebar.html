@@ -1,0 +1,52 @@
+{% load static %}
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+                <li class="menu-title">
+                    <span>Main</span>
+                </li>
+                <li class="active">
+                    <a href="{% url 'trainee:index' %}"><i class="fe fe-desktop"></i> <span>Dashboard</span></a>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-layout"></i> <span>Training </span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'trainee:apply_training' %}">Apply Training</a></li>
+                        <li><a href="{% url 'trainee:pending_training' %}">Pending</a></li>
+                        <li><a href="{% url 'trainee:training' %}">Approved</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-activity"></i> <span>Payment </span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'trainee:training_payment' %}">Make payment</a></li>
+                        <li><a href="{% url 'trainee:pending_payment' %}">Pending</a></li>
+                        <li><a href="{% url 'trainee:payment' %}">Confirmed</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0);"><i class="fe fe-lock"></i> <span>Accounts</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li>
+                            <a href="{% url 'trainee:change_password' %}"> <span>Change Password</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'trainee:profile' %}"> <span>Profile</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0);"><i class="fe fe-info"></i> <span>Help</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li>
+                            <a href="{% url 'trainee:feedback' %}"> <span>Feedback</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /Sidebar -->

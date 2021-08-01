@@ -1,0 +1,42 @@
+{% extends 'trainee/layout/base-auth.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% include 'trainee/accounts/includes/styles.html' %}
+{% block title %}Registration{% endblock %}
+{% block h1 %}Registration{% endblock %}
+{% block p %}register as trainee to access trainee portal {% endblock %}
+{% block content %}
+	<!-- Form -->
+	<form action="{% url 'trainee:register' %}" method="post">
+		{% csrf_token %}
+		<div class="form-group">
+			{{form.first_name|add_class:"form-control"|attr:"placeholder:First Name"}}
+			<div class="text-danger">{{form.errors.first_name}}</div>
+		</div>
+		<div class="form-group">
+			{{form.last_name|add_class:"form-control"|attr:"placeholder:Last Name"}}
+			<div class="text-danger">{{form.errors.last_name}}</div>
+		</div>
+		<div class="form-group">
+			{{form.email|add_class:"form-control"|attr:"placeholder:Email"}}
+			<div class="text-danger">{{form.errors.email}}</div>
+		</div>
+		<div class="form-group">
+			{{form.password1|add_class:"form-control"|attr:"placeholder:Password"}}
+			<div class="text-danger">{{form.errors.password1}}</div>
+		</div>
+		<div class="form-group">
+			{{form.password2|add_class:"form-control"|attr:"placeholder:Confirm Password"}}
+			<div class="text-danger">{{form.errors.password2}}</div>
+		</div>
+		<div class="form-group mb-0">
+			<button class="btn btn-primary btn-block" type="submit">Register</button>
+		</div>
+	</form>
+
+	<div class="text-center dont-have">Already have an account? <a href="{% url 'trainee:login' %}">Login</a></div>
+{% endblock %}
+{% include 'trainee/accounts/includes/scripts.html' %}
+{% block scripts %}
+<script src="{% static 'trainee/assets/js/trainee-sign-up.js' %}"></script>
+{% endblock %}

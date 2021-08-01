@@ -1,0 +1,42 @@
+{% extends 'manager/layout/base-auth.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% include 'manager/accounts/includes/styles.html' %}
+{% block title %}Registration{% endblock %}
+{% block h1 %}Registration{% endblock %}
+{% block p %}register as manager to access manager portal {% endblock %}
+{% block content %}
+	<!-- Form -->
+	<form action="{% url 'manager:register' %}" method="post" id="manager-sign-up">
+		{% csrf_token %}
+		<div class="form-group">
+			<input class="form-control" type="text" placeholder="First Name" name="first_name" id="id_first_name">
+			<div class="text-danger" id="error-first-name"></div>
+		</div>
+		<div class="form-group">
+			<input class="form-control" type="text" placeholder="Last Name" name="last_name" id="id_last_name">
+			<div class="text-danger" id="error-last-name"></div>
+		</div>
+		<div class="form-group">
+			<input class="form-control" type="email" placeholder="Email" name="email" id="id_email">
+			<div class="text-danger" id="error-email"></div>
+		</div>
+		<div class="form-group">
+			<input class="form-control" type="password" placeholder="Password" name="password1" id="id_password1">
+			<div class="text-danger" id="error-password1"></div>
+		</div>
+		<div class="form-group">
+			<input class="form-control" type="password" placeholder="Confirm Password" name="password2" id="id_password2">
+			<div class="text-danger" id="error-password2"></div>
+		</div>
+		<div class="form-group mb-0">
+			<button class="btn btn-primary btn-block" type="submit">Register</button>
+		</div>
+	</form>
+
+	<div class="text-center dont-have">Already have an account? <a href="{% url 'manager:login' %}">Login</a></div>
+{% endblock %}
+{% include 'manager/accounts/includes/scripts.html' %}
+{% block scripts %}
+<script src="{% static 'manager/assets/js/manager-sign-up.js' %}"></script>
+{% endblock %}

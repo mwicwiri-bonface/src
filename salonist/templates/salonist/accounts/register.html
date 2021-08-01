@@ -1,0 +1,39 @@
+{% extends 'salonist/layout/base-auth.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% include 'salonist/accounts/includes/styles.html' %}
+{% block title %}Registration{% endblock %}
+{% block h1 %}Registration{% endblock %}
+{% block p %}register as salonist to access salonist portal {% endblock %}
+{% block content %}
+	<!-- Form -->
+	<form action="." method="post">
+		{% csrf_token %}
+		<div class="form-group">
+			{% render_field form.first_name class+="form-control" placeholder="First Name" %}
+			<div class="text-danger" id="error-first_name">{{form.errors.first_name}}</div>
+		</div>
+		<div class="form-group">
+			{% render_field form.last_name class+="form-control" placeholder="Last Name" %}
+			<div class="text-danger" id="error-last_name">{{form.errors.last_name}}</div>
+		</div>
+		<div class="form-group">
+			{% render_field form.email class+="form-control" placeholder="Email" %}
+			<div class="text-danger" id="error-email">{{form.errors.email}}</div>
+		</div>
+		<div class="form-group">
+			{% render_field form.password1 class+="form-control" placeholder="Password" %}
+			<div class="text-danger" id="error-password1">{{form.errors.password1}}</div>
+		</div>
+		<div class="form-group">
+			{% render_field form.password2 class+="form-control" placeholder="Confirm Password" %}
+			<div class="text-danger" id="error-password2">{{form.errors.password2}}</div>
+		</div>
+		<div class="form-group mb-0">
+			<button class="btn btn-primary btn-block" type="submit">Register</button>
+		</div>
+	</form>
+
+	<div class="text-center dont-have">Already have an account? <a href="{% url 'salonist:login' %}">Login</a></div>
+{% endblock %}
+{% include 'salonist/accounts/includes/scripts.html' %}

@@ -1,0 +1,105 @@
+{% extends 'finance/layout/base.html' %}
+{% load static %}
+{% block title %}Appointment List{% endblock title %}
+{% include 'finance/includes/data-table-styles.html' %}
+{% include 'finance/includes/header.html' %}
+{% include 'finance/includes/sidebar.html' %}
+{% block content %}
+
+	<!-- Page Wrapper -->
+	<div class="page-wrapper">
+		<div class="content container-fluid">
+
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="row">
+					<div class="col-sm-12">
+						<h3 class="page-title">List of Pending Order  Payments</h3>
+						<ul class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'finance:index' %}">Dashboard</a></li>
+							<li class="breadcrumb-item"><a href="javascript:(0);">Pending Order  Payments</a></li>
+							<li class="breadcrumb-item active">Pending Order Payments</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Header -->
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="card">
+						<div class="card-body">
+							<div class="table-responsive">
+								<div class="table-responsive">
+								<table class="datatable table table-hover table-center mb-0">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Transaction Id</th>
+											<th>Order Id</th>
+											<th>Customer</th>
+											<th>Mpesa Code</th>
+											<th>Phone</th>
+											<th>Amount</th>
+											<th>Date</th>
+											<th>Status</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for object in object_list %}
+										<tr>
+											<td>{{forloop.counter}}</td>
+											<td>{{object.transaction_id}}</td>
+											<td>{{object.order.transaction_id}}</td>
+											<td>{{object.order.customer.get_full_name}}</td>
+											<td>{{object.mpesa}}</td>
+											<td>{{object.phone}}</td>
+											<td>{{object.amount}}</td>
+											<td>{{object.created}}</td>
+											<td>
+												{% if object.confirmed %}
+												<span class="badge badge-pill bg-success-light">
+													Confirmed
+												</span>
+												{% else %}
+												<span class="badge badge-pill bg-info-light">
+													Pending
+												</span>
+												{% endif %}
+											</td>
+											<td class="text-right">
+												<div class="table-action">
+													{% if not object.confirmed %}
+														<button class="btn btn-sm bg-info-light confirm" id="{{object.ids}}"
+																data-url="{% url 'finance:confirm_order_payment' order_id=object.id %}"
+																data-slug="{{object.id}}"
+														i>
+															<i class="fe fe-check"></i> Confirm
+														</button>
+													{% endif %}
+													<a href="#" class="btn btn-sm bg-primary-light">
+														<i class="fe fe-print"></i> Print
+													</a>
+												</div>
+											</td>
+										</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- /Page Wrapper -->
+
+{% endblock content %}
+{% include 'finance/includes/data-table-scripts.html' %}
+{% block scripts %}
+	<script src="{% static 'finance/confirm-order-payment.js' %}"></script>
+{% endblock %}
