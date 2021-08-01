@@ -13,6 +13,7 @@ class CustomerSignUpForm(UserCreationForm):
         user = super().save(commit=False)
         user.is_customer = True
         user.is_active = False
+        user.is_verified = True
         if commit:
             user.save()
         return user

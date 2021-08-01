@@ -1,4 +1,4 @@
-{% extends 'manager/layout/base.html' %}
+{% extends 'stock/layout/base.html' %}
 {% load static %}
 {% block title %}Home{% endblock title %}
 {% block content %}
@@ -21,89 +21,89 @@
 		<!-- /Page Header -->
 
 		<div class="row">
-			<div class="col-xl-3 col-sm-6 col-12">
+			<div class="col-xl-4 col-sm-6 col-12">
 				<div class="card">
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-primary border-primary">
-								<i class="fe fe-users"></i>
+								<i class="fe fe-shopping-bag"></i>
 							</span>
 							<div class="dash-count">
-								<h3>{{salonists_count}}</h3>
+								<h3>{{active_products_count}}</h3>
 							</div>
 						</div>
 						<div class="dash-widget-info">
-							<h6 class="text-muted">Salonists</h6>
+							<h6 class="text-muted">Products on Display</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-primary w-50"></div>
+								<div class="progress-bar bg-primary w-{{active_products_progress}}"></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-xl-3 col-sm-6 col-12">
+			<div class="col-xl-4 col-sm-6 col-12">
 				<div class="card">
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-success">
-								<i class="fe fe-credit-card"></i>
+								<i class="fe fe-shopping-bag"></i>
 							</span>
 							<div class="dash-count">
-								<h3>{{customers_count}}</h3>
+								<h3>{{pending_products_count}}</h3>
 							</div>
 						</div>
 						<div class="dash-widget-info">
 
-							<h6 class="text-muted">Customers</h6>
+							<h6 class="text-muted">Pending Products</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-success w-50"></div>
+								<div class="progress-bar bg-success w-{{pending_products_progress}}"></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-xl-3 col-sm-6 col-12">
+			<div class="col-xl-4 col-sm-6 col-12">
 				<div class="card">
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-danger border-danger">
-								<i class="fe fe-money"></i>
+								<i class="fe fe-shopping-bag"></i>
 							</span>
 							<div class="dash-count">
-								<h3>{{appointment_count}}</h3>
+								<h3>{{stock_out_products_count}}</h3>
 							</div>
 						</div>
 						<div class="dash-widget-info">
 
-							<h6 class="text-muted">Appointment</h6>
+							<h6 class="text-muted">Products out of stock</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-danger w-50"></div>
+								<div class="progress-bar bg-danger w-{{stock_out_products_progress}}"></div>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="col-xl-3 col-sm-6 col-12">
-				<div class="card">
-					<div class="card-body">
-						<div class="dash-widget-header">
-							<span class="dash-widget-icon text-warning border-warning">
-								<i class="fe fe-folder"></i>
-							</span>
-							<div class="dash-count">
-								<h3>Ksh {{total_amount}}</h3>
-							</div>
-						</div>
-						<div class="dash-widget-info">
+<!--			<div class="col-xl-3 col-sm-6 col-12">-->
+<!--				<div class="card">-->
+<!--					<div class="card-body">-->
+<!--						<div class="dash-widget-header">-->
+<!--							<span class="dash-widget-icon text-warning border-warning">-->
+<!--								<i class="fe fe-shopping-bag"></i>-->
+<!--							</span>-->
+<!--							<div class="dash-count">-->
+<!--								<h3>Ksh {{total_amount}}</h3>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--						<div class="dash-widget-info">-->
 
-							<h6 class="text-muted">Revenue</h6>
-							<div class="progress progress-sm">
-								<div class="progress-bar bg-warning w-50"></div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+<!--							<h6 class="text-muted">Revenue</h6>-->
+<!--							<div class="progress progress-sm">-->
+<!--								<div class="progress-bar bg-warning w-50"></div>-->
+<!--							</div>-->
+<!--						</div>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--			</div>-->
 		</div>
 <!--		<div class="row">-->
 <!--			<div class="col-md-12 col-lg-6">-->
@@ -136,48 +136,48 @@
 <!--			</div>-->
 <!--		</div>-->
 		<div class="row">
-			<div class="col-md-6 d-flex">
+			<div class="col-md-12 d-flex">
 
 				<!-- Recent Orders -->
 				<div class="card card-table flex-fill">
 					<div class="card-header">
-						<h4 class="card-title">Salonists List</h4>
+						<h4 class="card-title">Products Out of Stock List</h4>
 					</div>
 					<div class="card-body">
 						<div class="table-responsive">
 							<table class="table table-hover table-center mb-0">
 								<thead>
 									<tr>
-										<th>Salonist Name</th>
-										<th>Speciality</th>
-<!--										<th>Earned</th>-->
-<!--										<th>Reviews</th>-->
+										<th>#</th>
+										<th>Name</th>
+										<th>Description</th>
+										<th>Image</th>
+										<th>Quantity</th>
+										<th>Status</th>
 									</tr>
 								</thead>
 								<tbody>
-								{% for object in salonists %}
+								{% for object in stock_out_products %}
 									<tr>
+										<td>{{forloop.counter}}</td>
+										<td>{{object.name}}</td>
+										<td>{{object.description}}</td>
 										<td>
 											<h2 class="table-avatar">
-												<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{object.salonistprofile.image.url}}" alt="User Image"></a>
-												<a href="#">{{object.get_full_name}}</a>
+												<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img" src="{{object.image.url}}" alt="product"></a>
+<!--												<a href="#">{{object.get_full_name}} </a>-->
 											</h2>
 										</td>
+										<td>{{object.quantity}}</td>
 										<td>
-											{% for style in object.salonistservice_set.all %}
-											<tr><td>{{style.service.name}}</td></tr>
-											{% endfor %}
+											{% if object.is_active %}
+												On Display
+											{% else %}
+												Not on Display
+											{% endif %}
 										</td>
-<!--										<td>$3200.00</td>-->
-<!--										<td>-->
-<!--											<i class="fe fe-star text-warning"></i>-->
-<!--											<i class="fe fe-star text-warning"></i>-->
-<!--											<i class="fe fe-star text-warning"></i>-->
-<!--											<i class="fe fe-star text-warning"></i>-->
-<!--											<i class="fe fe-star-o text-secondary"></i>-->
-<!--										</td>-->
 									</tr>
-								{% endfor %}
+									{% endfor %}
 								</tbody>
 							</table>
 						</div>
@@ -186,30 +186,46 @@
 				<!-- /Recent Orders -->
 
 			</div>
-			<div class="col-md-6 d-flex">
+			<div class="col-md-12 d-flex">
 
 				<!-- Feed Activity -->
 				<div class="card  card-table flex-fill">
 					<div class="card-header">
-						<h4 class="card-title">Customers List</h4>
+						<h4 class="card-title">Products in Stock List</h4>
 					</div>
 					<div class="card-body">
 						<div class="table-responsive">
 							<table class="table table-hover table-center mb-0">
 								<thead>
 									<tr>
+										<th>#</th>
 										<th>Name</th>
-										<th>Phone</th>
+										<th>Description</th>
+										<th>Image</th>
+										<th>Quantity</th>
+										<th>Status</th>
+										<th>Action</th>
 									</tr>
 								</thead>
 								<tbody>
-									{% for object in customers %}
+									{% for object in products %}
 									<tr>
+										<td>{{forloop.counter}}</td>
+										<td>{{object.name}}</td>
+										<td>{{object.description}}</td>
 										<td>
 											<h2 class="table-avatar">
-												<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{object.customerprofile.image.url}}" alt="{{object.get_full_name}}"></a>
-												<a href="#">{{object.get_full_name}} </a>
+												<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img" src="{{object.image.url}}" alt="product img"></a>
+<!--												<a href="#">{{object.get_full_name}} </a>-->
 											</h2>
+										</td>
+										<td>{{object.quantity}}</td>
+										<td>
+											{% if object.is_active %}
+												On Display
+											{% else %}
+												Not on Display
+											{% endif %}
 										</td>
 										<td>{{object.customerprofile.phone_number}}</td>
 									</tr>
@@ -223,43 +239,43 @@
 
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-md-12">
+<!--		<div class="row">-->
+<!--			<div class="col-md-12">-->
 
-				<!-- Recent Orders -->
-				<div class="card card-table">
-					<div class="card-header">
-						<h4 class="card-title">Appointment List</h4>
-					</div>
-					<div class="card-body">
-						<div class="table-responsive">
-							<table class="table table-hover table-center mb-0">
-								<thead>
-									<tr>
-										<th>Salonist Name</th>
-										<th>Service Name</th>
-										<th>Customer Name</th>
-										<th>Date</th>
-									</tr>
-								</thead>
-								<tbody>
-								{% for object in appointments %}
-									<tr>
-										<td>{{object.salonist.get_full_name}}</a></td>
-										<td>{{object.booking.service.name}}</a></td>
-										<td>{{object.booking.customer.get_full_name}}</a></td>
-										<td>{{object.date}}</td>
-									</tr>
-									{% endfor %}
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-				<!-- /Recent Orders -->
+<!--				&lt;!&ndash; Recent Orders &ndash;&gt;-->
+<!--				<div class="card card-table">-->
+<!--					<div class="card-header">-->
+<!--						<h4 class="card-title">Appointment List</h4>-->
+<!--					</div>-->
+<!--					<div class="card-body">-->
+<!--						<div class="table-responsive">-->
+<!--							<table class="table table-hover table-center mb-0">-->
+<!--								<thead>-->
+<!--									<tr>-->
+<!--										<th>Salonist Name</th>-->
+<!--										<th>Service Name</th>-->
+<!--										<th>Customer Name</th>-->
+<!--										<th>Date</th>-->
+<!--									</tr>-->
+<!--								</thead>-->
+<!--								<tbody>-->
+<!--								{% for object in appointments %}-->
+<!--									<tr>-->
+<!--										<td>{{object.salonist.get_full_name}}</a></td>-->
+<!--										<td>{{object.booking.service.name}}</a></td>-->
+<!--										<td>{{object.booking.customer.get_full_name}}</a></td>-->
+<!--										<td>{{object.date}}</td>-->
+<!--									</tr>-->
+<!--									{% endfor %}-->
+<!--								</tbody>-->
+<!--							</table>-->
+<!--						</div>-->
+<!--					</div>-->
+<!--				</div>-->
+<!--				&lt;!&ndash; /Recent Orders &ndash;&gt;-->
 
-			</div>
-		</div>
+<!--			</div>-->
+<!--		</div>-->
 
 	</div>
 </div>

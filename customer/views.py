@@ -173,20 +173,20 @@ class CustomerSignUpView(CreateView):
         user = form.save(commit=False)
         user.is_active = True
         user.save()
-        current_site = get_current_site(self.request)
-        to_email = form.cleaned_data.get('email')
-        subject = f"Ashley's Salon Customer Email Verification."
-        msg_plain = render_to_string('customer/emails/email.txt', {'user_name': user.get_full_name, })
-        msg_html = render_to_string('customer/emails/account_activation_email.html', {
-            'user': user,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': account_activation_token.make_token(user),
-        })
-        send_mail(subject, msg_plain, "Ashley's Salon", [to_email], html_message=msg_html)
+        # current_site = get_current_site(self.request)
+        # to_email = form.cleaned_data.get('email')
+        # subject = f"Ashley's Salon Customer Email Verification."
+        # msg_plain = render_to_string('customer/emails/email.txt', {'user_name': user.get_full_name, })
+        # msg_html = render_to_string('customer/emails/account_activation_email.html', {
+        #     'user': user,
+        #     'domain': current_site.domain,
+        #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        #     'token': account_activation_token.make_token(user),
+        # })
+        # send_mail(subject, msg_plain, "Ashley's Salon", [to_email], html_message=msg_html)
         data = {
             'status': True,
-            'message': f"Hi {name} {last}, your account has been created successfully verify your email.",
+            'message': f"Hi {name} {last}, your account has been created successfully  wait for approval.",
             'redirect': reverse('customer:login')
         }
         return JsonResponse(data)
@@ -668,3 +668,20 @@ def book_appointment(request):
             else:
                 context['info'] = "Sorry Stop time has to be future of Start time not past"
     return JsonResponse(context)
+
+
+
+def generate_pending_donation_pdf(request):
+    """Generate pdf."""
+    # Model data
+    user = request.user.id
+    fund = funds.objects.filter(sponsor_id=user, status="P").order_by('-timestamp')
+    # Rendered
+    html_string = render_to_string('sponsor/pending_donation_pdf.html', {'funds': fund})
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = 'inline; filename=pending_donation.pdf'
+    return response

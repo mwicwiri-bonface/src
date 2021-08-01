@@ -137,21 +137,22 @@ class TraineeSignUpView(CreateView):
             username = username.replace('@outlook.com', '')
         form.instance.username = username
         user = form.save(commit=False)
-        user.is_active = True
+        # user.is_active = True
+        user.is_verified = True
         user.save()
-        current_site = get_current_site(self.request)
-        to_email = form.cleaned_data.get('email')
-        subject = f"Ashley's Salon Trainee Email Verification."
-        msg_plain = render_to_string('trainee/emails/email.txt', {'user_name': user.get_full_name, })
-        msg_html = render_to_string('trainee/emails/account_activation_email.html', {
-            'user': user,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': account_activation_token.make_token(user),
-        })
-        send_mail(subject, msg_plain, "Ashley's Salon", [to_email], html_message=msg_html)
+        # current_site = get_current_site(self.request)
+        # to_email = form.cleaned_data.get('email')
+        # subject = f"Ashley's Salon Trainee Email Verification."
+        # msg_plain = render_to_string('trainee/emails/email.txt', {'user_name': user.get_full_name, })
+        # msg_html = render_to_string('trainee/emails/account_activation_email.html', {
+        #     'user': user,
+        #     'domain': current_site.domain,
+        #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        #     'token': account_activation_token.make_token(user),
+        # })
+        # send_mail(subject, msg_plain, "Ashley's Salon", [to_email], html_message=msg_html)
         messages.success(self.request,
-                         f"Hi {name} {last}, your account has been created successfully verify your email.")
+                         f"Hi {name} {last}, your account has been created successfully wait for approval.")
         return redirect("trainee:login")
 
 

@@ -1,0 +1,66 @@
+<html>
+ <head>
+   <title>Test</title>
+   <style>
+     h1 {
+        margin-bottom: 1em;
+        font-size: 1em;
+        font-weight: bold;
+        text-align: center;
+     }
+    body {
+      font-family: $helvetica;
+      color: rgba(94,93,82,1);
+    }
+     table {
+        margin-bottom: 1.5em;
+        border-spacing: 0;
+        border: 1px solid;
+        margin: 0 auto;
+        width: 100%;
+     }
+
+     th {
+       background-color: rgba(29,150,178,1);
+      border: 1px solid rgba(29,150,178,1);
+      font-weight: normal;
+      text-align: center;
+      color: white;
+     }
+     td{
+        border-left: 1px solid  rgba(29,150,178,1);
+        border-bottom: 1px solid  rgba(29,150,178,1);
+        text-align: center;
+     }
+   </style>
+ </head>
+ <body>
+   <h1>List of Pending Donations</h1>
+   <table>
+     <thead>
+       <tr>
+         <th>Last Name</th>
+         <th>First Name</th>
+         <th>Donation No</th>
+         <th>Status</th>
+         <th>Mpesa Code</th>
+         <th>Amount</th>
+         <th>Date</th>
+       </tr>
+     </thead>
+     <tbody>
+       {% for donation in funds %}
+         <tr>
+           <td>{{donation.sponsor.last_name}}</td>
+           <td>{{donation.sponsor.first_name}}</td>
+           <td>{{donation.fund_no}}</td>
+           <td>{{donation.get_status_display}}</td>
+           <td>{{donation.mpesa_code}}</td>
+           <td>{{donation.amount}}</td>
+           <td>{{donation.timestamp}}</td>
+         </tr>
+       {% endfor %}
+     </tbody>
+   </table>
+ </body>
+</html>

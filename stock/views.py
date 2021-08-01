@@ -35,28 +35,18 @@ def login(request):
             request.session.set_expiry(0)
         if user is not None:
             if not user.is_active and user.is_stock and not user.is_archived:
-                if user.is_verified:
-                    messages.info(request,
-                                  "your email is verified, but your account is "
-                                  "inactive. Check your mail for notification.")
-                else:
-                    messages.info(request,
-                                  "your email is not verified, verify your email.")
+                messages.info(request, "You've registered but your account is pending.")
             elif user.is_active and user.is_stock and not user.is_archived:
-                if user.is_verified:
-                    auth_login(request, user)
-                    user = request.user.get_full_name
-                    messages.success(request, f"Hi {user}, welcome to Stock's Portal.")
-                    try:
-                        return redirect(request.GET.get('next', 'stock:index'))
-                    except (NoReverseMatch, ImproperlyConfigured):
-                        return redirect("stock:index")
-                else:
-                    messages.info(request,
-                                  "you've registered, but your email is not verified, verify your email and try again.")
+                auth_login(request, user)
+                user = request.user.get_full_name
+                messages.success(request, f"Hi {user}, welcome to Stock's Portal.")
+                try:
+                    return redirect(request.GET.get('next', 'stock:index'))
+                except (NoReverseMatch, ImproperlyConfigured):
+                    return redirect("stock:index")
             else:
                 messages.info(request, f"Hi {user.get_full_name}, "
-                                       f"you can't login here, this login page is for Stocks only.")
+                                       f"you can't login here, this login page is for Stock managers only.")
                 logout(request)
                 try:
                     return redirect(request.GET.get('next', ''))
@@ -115,10 +105,11 @@ class StockSignUpView(CreateView):
             username = username.replace('@outlook.com', '')
         form.instance.username = username
         user = form.save(commit=False)
-        user.is_active = True
+        # user.is_active = True
+        user.is_verified = True
         user.save()
         messages.success(self.request, f"Hi {name} {last}, your account has been "
-                                       f"created successfully verify your email, to login.")
+                                       f"created successfully  wait for approval, to login.")
         data = {
             'status': True,
             'redirect': '/stock/login'
@@ -127,19 +118,25 @@ class StockSignUpView(CreateView):
 
 
 class Home(ListView):
-    model = Stock
+    model = Product
     template_name = "stock/index.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['salonists_count'] = Salonist.objects.filter(is_active=True).count()
-        context['salonists'] = Salonist.objects.filter(is_active=True)
-        context['customers_count'] = Customer.objects.filter(is_active=True).count()
-        context['customers'] = Customer.objects.filter(is_active=True)
-        context['appointment_count'] = Appointment.objects.all().count()
-        context['appointments'] = Appointment.objects.all()
-        context['total_amount'] = BookingPayment.objects.all().aggregate(Sum('amount')).get('amount__sum', 0.00)
-        # amounts = list(BookingPayment.objects.all().values_list('amount', Flat=True))
+        context['products'] = self.object_list
+        context['active_products'] = context['products'].filter(is_active=True)
+        context['pending_products'] = context['products'].filter(is_active=False)
+        context['stock_out_products'] = context['products'].filter(quantity__lte=0)
+        context['active_products_count'] = context['products'].filter(is_active=True).count()
+        context['pending_products_count'] = context['products'].filter(is_active=False).count()
+        context['stock_out_products_count'] = context['products'].filter(quantity__lte=0).count()
+        context['active_products_progress'] = int((context['active_products_count'] / context['products'].count())
+                                                  * 100)
+        context['pending_products_progress'] = int((context['pending_products_count'] / context['products'].count())
+                                                   * 100)
+        context['stock_out_products_progress'] = int((context['stock_out_products_count'] / context['products'].count())
+                                                   * 100)
+        context['products'] = self.object_list.filter(quantity__gte=1)
         return context
 
 
