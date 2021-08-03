@@ -10,6 +10,7 @@ urlpatterns = [
     path('faq/', stock_required(views.faq), name="faq"),
     path('profile/', stock_required(views.profile_main), name="profile_main"),
     path('create-product/', stock_required(views.ProductCreateView.as_view()), name="create_product"),
+    path('add_product_gallery/<slug>/', stock_required(views.add_product_gallery), name="add_product_gallery"),
     path('products/', stock_required(views.ProductsListView.as_view()), name="products"),
     path('login/', views.login, name="login"),
     path('register/', views.StockSignUpView.as_view(), name="register"),

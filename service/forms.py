@@ -31,7 +31,7 @@ class BookingPaymentForm(ModelForm):
 class AppointmentForm(ModelForm):
     class Meta:
         model = Appointment
-        fields = ['stop_date', 'date']
+        fields = ['booking', 'stop_date', 'date']
 
 
 class ApprenticeshipForm(ModelForm):

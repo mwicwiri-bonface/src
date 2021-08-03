@@ -5,7 +5,8 @@ function stop_reloading(slug) {
   $('#'+slug).html(`<i class="fe fe-check"></i> Confirm`);
 }
 for (i = 0; i < orderPaymentBtns.length; i++) {
-	orderPaymentBtns[i].addEventListener('click', function(){
+	orderPaymentBtns[i].addEventListener('click', function(e){
+	    e.preventDefault()
 		var slug = this.dataset.slug
 		var url = this.dataset.url
 		console.log('Slug:', slug)

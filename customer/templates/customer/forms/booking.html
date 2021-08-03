@@ -59,6 +59,7 @@
 														</tr>
 													</thead>
 													<tbody>
+														{% if object.transaction_id %}
 														<tr>
 														    <td>{{object.transaction_id}}</td>
 															<td>
@@ -71,13 +72,18 @@
 															</td>
 															<td>Ksh {{object.service.price|floatformat:2|intcomma}}</td>
 														</tr>
+														{% endif %}
 													</tbody>
 												</table>
 											</div>
 										</div>
 										<br/>
-										<p><b>Total</b> Ksh.{{object.service.price|floatformat:2|intcomma}}</p>
-										<a href="{% url 'customer:booking_checkout' %}" class="btn btn-primary">Proceed to checkout</a>
+										{% if object.transaction_id %}
+											<p><b>Total</b> Ksh.{{object.service.price|floatformat:2|intcomma}}</p>
+											<a href="{% url 'customer:booking_checkout' %}" class="btn btn-primary">
+												Proceed to checkout
+											</a>
+										{% endif %}
 									</div>
 								</div>
 								<!-- /Cart Tab -->

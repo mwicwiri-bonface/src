@@ -26,7 +26,7 @@
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-primary border-primary">
-								<i class="fe fe-users"></i>
+								<i class="fe fe-book"></i>
 							</span>
 							<div class="dash-count">
 								<h3>{{pending_trainee_count}}</h3>
@@ -35,7 +35,7 @@
 						<div class="dash-widget-info">
 							<h6 class="text-muted">Pending Training Approval</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-primary w-50"></div>
+								<div class="progress-bar bg-primary w-{{pending_trainee_per}}"></div>
 							</div>
 						</div>
 					</div>
@@ -46,7 +46,7 @@
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-success">
-								<i class="fe fe-credit-card"></i>
+								<i class="fe fe-book"></i>
 							</span>
 							<div class="dash-count">
 								<h3>{{approved_trainee_count}}</h3>
@@ -56,7 +56,7 @@
 
 							<h6 class="text-muted">Approved Training</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-success w-50"></div>
+								<div class="progress-bar bg-success w-{{approved_trainee_per}}"></div>
 							</div>
 						</div>
 					</div>
@@ -67,7 +67,7 @@
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-danger border-danger">
-								<i class="fe fe-money"></i>
+								<i class="fe fe-book"></i>
 							</span>
 							<div class="dash-count">
 								<h3>{{paid_trainee_count}}</h3>
@@ -77,7 +77,7 @@
 
 							<h6 class="text-muted">Paid Trainings</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-danger w-50"></div>
+								<div class="progress-bar bg-danger w-{{paid_trainee_per}}"></div>
 							</div>
 						</div>
 					</div>
@@ -88,7 +88,7 @@
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-warning border-warning">
-								<i class="fe fe-folder"></i>
+								<i class="fe fe-book"></i>
 							</span>
 							<div class="dash-count">
 								<h3>{{not_paid_trainee_count}}</h3>
@@ -98,7 +98,7 @@
 
 							<h6 class="text-muted">Not Paid Trainings</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-warning w-50"></div>
+								<div class="progress-bar bg-warning w-{{not_paid_trainee_per}}"></div>
 							</div>
 						</div>
 					</div>
@@ -111,7 +111,9 @@
 				<!-- Trainings -->
 				<div class="card card-table flex-fill">
 					<div class="card-header">
-						<h4 class="card-title">Trainings List</h4>
+						<h4 class="card-title">Trainings List
+							<a href="{% url 'trainee:training_application_receipt_pdf' %}" class="text-align-right" style="text-align: right;"> <i class="fe fe-print"> Generate pdf</i></a>
+						</h4>
 					</div>
 					<div class="card-body">
 						<div class="table-responsive">

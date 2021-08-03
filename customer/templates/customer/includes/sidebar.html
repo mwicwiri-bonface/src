@@ -1,81 +1,81 @@
-{% load static %}
-{% load humanize %}
-    <!-- Profile Sidebar -->
-    <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
-        <div class="profile-sidebar">
-            <div class="widget-profile pro-widget-content">
-                <div class="profile-info-widget">
-                    <a href="#" class="booking-doc-img">
-                        <img src="{{request.user.customer.customerprofile.image.url}}" alt="{{request.user.get_full_name}}">
-                    </a>
-                    <div class="profile-det-info">
-                        <h3>{{request.user.get_full_name}}</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="dashboard-widget">
-                <nav class="dashboard-menu">
-                    <ul>
-                        <li>
-                            <a href="{% url 'customer:index' %}">
-                                <i class="fas fa-columns"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'customer:cart_list' %}" title="KSH {{order.get_cart_total|floatformat:2|intcomma}}">
-                                <i class="fas fa-shopping-cart"></i>
-                                <span>Cart</span> <small>Ksh.{{order.get_cart_total|floatformat:2|intcomma}}</small>
-                                <small class="unread-msg">{{order.get_cart_items}}</small>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'customer:wishlist_list' %}">
-                                <i class="fas fa-heart"></i>
-                                <span>Wishlist</span>
-<!--                                <small class="unread-msg">23</small>-->
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="fas fa-truck-moving"></i>
-                                <span>Book Appointment</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'customer:booking_list' %}">
-                                <i class="fas fa-calendar-check"></i>
-                                <span>Bookings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'customer:feedback' %}">
-                                <i class="fas fa-envelope"></i>
-                                <span>Feedback</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'customer:profile_main' %}">
-                                <i class="fas fa-user-cog"></i>
-                                <span>Profile Settings</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'customer:password_change' %}">
-                                <i class="fas fa-lock"></i>
-                                <span>Change Password</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'customer:logout' %}">
-                                <i class="fas fa-sign-out-alt"></i>
-                                <span>Logout</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+<!--{% load static %}-->
+<!--{% load humanize %}-->
+<!--    &lt;!&ndash; Profile Sidebar &ndash;&gt;-->
+<!--    <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">-->
+<!--        <div class="profile-sidebar">-->
+<!--            <div class="widget-profile pro-widget-content">-->
+<!--                <div class="profile-info-widget">-->
+<!--                    <a href="#" class="booking-doc-img">-->
+<!--                        <img src="{{request.user.customer.customerprofile.image.url}}" alt="{{request.user.get_full_name}}">-->
+<!--                    </a>-->
+<!--                    <div class="profile-det-info">-->
+<!--                        <h3>{{request.user.get_full_name}}</h3>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="dashboard-widget">-->
+<!--                <nav class="dashboard-menu">-->
+<!--                    <ul>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:index' %}">-->
+<!--                                <i class="fas fa-columns"></i>-->
+<!--                                <span>Dashboard</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:cart_list' %}" title="KSH {{order.get_cart_total|floatformat:2|intcomma}}">-->
+<!--                                <i class="fas fa-shopping-cart"></i>-->
+<!--                                <span>Cart</span> <small>Ksh.{{order.get_cart_total|floatformat:2|intcomma}}</small>-->
+<!--                                <small class="unread-msg">{{order.get_cart_items}}</small>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:wishlist_list' %}">-->
+<!--                                <i class="fas fa-heart"></i>-->
+<!--                                <span>Wishlist</span>-->
+<!--&lt;!&ndash;                                <small class="unread-msg">23</small>&ndash;&gt;-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:appointment' %}">-->
+<!--                                <i class="fas fa-truck-moving"></i>-->
+<!--                                <span>Book Appointment</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:booking_list' %}">-->
+<!--                                <i class="fas fa-calendar-check"></i>-->
+<!--                                <span>Bookings</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:feedback' %}">-->
+<!--                                <i class="fas fa-envelope"></i>-->
+<!--                                <span>Feedback</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:profile_main' %}">-->
+<!--                                <i class="fas fa-user-cog"></i>-->
+<!--                                <span>Profile Settings</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:password_change' %}">-->
+<!--                                <i class="fas fa-lock"></i>-->
+<!--                                <span>Change Password</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                        <li>-->
+<!--                            <a href="{% url 'customer:logout' %}">-->
+<!--                                <i class="fas fa-sign-out-alt"></i>-->
+<!--                                <span>Logout</span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </nav>-->
+<!--            </div>-->
 
-        </div>
-    </div>
-    <!-- / Profile Sidebar -->
+<!--        </div>-->
+<!--    </div>-->
+<!--    &lt;!&ndash; / Profile Sidebar &ndash;&gt;-->

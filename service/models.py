@@ -38,7 +38,7 @@ class BookingPayment(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True)
     mpesa = models.CharField(max_length=10, help_text="Mpesa Code")
     phone = PhoneNumberField(blank=True, null=True)
-    manager = models.ForeignKey(Finance, on_delete=models.CASCADE)
+    manager = models.ForeignKey(Finance, on_delete=models.CASCADE, null=True)
     amount = models.FloatField(default=0.0)
     confirmed = models.BooleanField(default=False, help_text="Means manager has confirmed payment")
     updated = models.DateTimeField(_('Updated'), auto_now=True, null=True)

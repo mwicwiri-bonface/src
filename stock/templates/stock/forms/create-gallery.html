@@ -1,0 +1,78 @@
+{% extends 'stock/layout/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Adding Gallery{% endblock title %}
+{% include 'stock/includes/form-styles.html' %}
+{% include 'stock/includes/header.html' %}
+{% include 'stock/includes/sidebar.html' %}
+{% block content %}
+	<!-- Page Wrapper -->
+	<div class="page-wrapper">
+
+		<div class="content container-fluid">
+
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="row">
+					<div class="col">
+						<h3 class="page-title">Add Gallery</h3>
+						<ul class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'stock:index' %}">Dashboard</a></li>
+							<li class="breadcrumb-item active">{{object.name}}</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Header -->
+
+			<div class="row">
+				<div class="col-md-12">
+					{% include 'includes/messages.html' %}
+					<div class="card">
+						<div class="card-header">
+							<h4 class="card-title">Gallery for {{object.name}}</h4>
+						</div>
+						<div class="card-body">
+							<form action="." method="post" enctype="multipart/form-data">
+								{% csrf_token %}
+								{{ formset.management_form }}
+								{% if formset.non_form_errors %}
+									<div class="alert alertdanger">{{formset.non_form_errors}}</div>
+								{% endif %}
+								<table class="col-12 col-md-12 col-lg-12">
+								  {% for form in formset %}
+									<tr>
+										<td>
+											{{ form }}
+										</td>
+									</tr>
+								  {% endfor %}
+								</table>
+								<div class="text-right">
+									<input type="hidden" value="false" name="additems" id="additems">
+                      				<button class="btn btn-primary" id="additemsbutton">
+										<i class="fas fa-address-book"></i> Add another image
+									</button>
+									<button type="submit" class="btn btn-primary">Submit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Wrapper -->
+
+{% endblock content %}
+{% include 'stock/includes/form-scripts.html' %}
+{% block scripts %}
+  <script>
+        $(document).ready(function() {
+            $("#additemsbutton").on('click',function(event) {
+            console.log("adding another image...")
+             $("#additems").val("true");
+           });
+    });
+  </script>
+{% endblock scripts %}

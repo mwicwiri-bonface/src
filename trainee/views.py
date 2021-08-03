@@ -1,27 +1,23 @@
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ImproperlyConfigured
-from django.core.mail import send_mail
-from django.http import JsonResponse
+from django.db.models import ExpressionWrapper, F, fields
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from django.urls import NoReverseMatch, reverse
-from django.utils.encoding import force_text, force_bytes
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.urls import NoReverseMatch
+from django.utils import timezone
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 from django.views import View
 from django.views.generic import ListView, CreateView
+from weasyprint import HTML
 
+from salonist.tokens import account_activation_token
 from trainee.forms import TraineeSignUpForm, TraineeFeedbackForm, TraineeProfileForm, TraineeForm, \
     TrainingApplicationForm, TrainingPaymentForm
-from trainee.models import Trainee, TraineeFeedback, TrainingApplication, TrainingPayment
-from salonist.tokens import account_activation_token
-from service.forms import BookingPaymentForm
-from service.models import Service, Booking, Apprenticeship, BookingPayment, Appointment
-from store.forms import OrderPaymentForm
-from store.models import Order, Product, OrderItem, OrderPayment, Wishlist
-from user.decorators import trainee_required
+from trainee.models import Trainee, TraineeFeedback, TrainingApplication, TrainingPayment, Training
 from user.models import CustomUser
 from utils.utils import generate_key
 
@@ -37,11 +33,48 @@ class Home(ListView):
         context = super().get_context_data(**kwargs)
         trainee = self.request.user.trainee
         context['object_list'] = self.object_list.filter(trainee=trainee)
-        context['paid_trainee_count'] = context['object_list'].filter(is_paid=True).count()
-        context['not_paid_trainee_count'] = context['object_list'].filter(is_paid=False).count()
+        context['paid_trainee_count'] = context['object_list'].filter(is_approved=True, is_paid=True).count()
+        context['paid_trainee_per'] = int((context['paid_trainee_count'] / context['object_list'].count()) * 100)
+        context['not_paid_trainee_count'] = context['object_list'].filter(is_approved=True, is_paid=False).count()
+        context['not_paid_trainee_per'] = int((context['not_paid_trainee_count'] / context['object_list'].count())
+                                              * 100)
         context['pending_trainee_count'] = context['object_list'].filter(is_approved=False).count()
+        context['pending_trainee_per'] = int((context['pending_trainee_count'] / context['object_list'].count()) * 100)
         context['approved_trainee_count'] = context['object_list'].filter(is_approved=True).count()
+        context['approved_trainee_per'] = int(
+            (context['approved_trainee_count'] / context['object_list'].count()) * 100)
         return context
+
+
+def training_application_receipt_pdf(request):
+    """Generate pdf."""
+    # Model data
+    trainee = Trainee.objects.get(id=request.user.id)
+    data = {'object_list': TrainingApplication.objects.filter(trainee=trainee)}
+    # Rendered
+    html_string = render_to_string('trainee/receipts/training-application-receipt.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename={trainee.first_name}-training-application.pdf "
+    return response
+
+
+def approved_training_application_receipt_pdf(request, slug):
+    """Generate pdf."""
+    # Model data
+    data = {'object': TrainingApplication.objects.get(id=slug)}
+    # Rendered
+    html_string = render_to_string('trainee/receipts/approved-training-application.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename={data['object'].training.service.name}" \
+                                      f"-approved-training-application.pdf "
+    return response
 
 
 def login(request):
@@ -238,6 +271,18 @@ def feedback(request):
     return render(request, 'trainee/forms/feedback.html', data)
 
 
+class TrainingsListView(ListView):
+    model = Training
+    template_name = "trainee/tables/trainings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TrainingsListView, self).get_context_data(**kwargs)
+        duration = ExpressionWrapper(F('end_date') - F('date'), output_field=fields.DurationField())
+        context['object_list'] = self.object_list.filter(
+            date__gte=timezone.now(), end_date__gt=timezone.now()).annotate(duration=duration)
+        return context
+
+
 def apply_training(request):
     data = {}
     form = TrainingApplicationForm
@@ -325,3 +370,16 @@ class TrainingPaymentListView(ListView):
         trainee = self.request.user.trainee
         context['object_list'] = self.object_list.filter(trainee=trainee, is_confirmed=True)
         return context
+
+
+def apply_for_training(request, slug):
+    data = {}
+    trainee = request.user.trainee
+    training = Training.objects.get(id=slug)
+    if TrainingApplication.objects.filter(trainee=trainee, training=training, is_done=False).exists():
+        data['info'] = f"Sorry, you've already applied for {training.service.name} Training"
+    else:
+        instance = TrainingApplication.objects.create(trainee=trainee, training=training,
+                                                      code=generate_key(8, 8), is_done=False)
+        data['message'] = f"Training {instance.training.service.name}, has been applied successfully."
+    return JsonResponse(data)

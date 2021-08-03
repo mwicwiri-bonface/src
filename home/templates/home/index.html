@@ -56,7 +56,7 @@
 							<p class="speciality">{{object.description}}</p>
 							<div class="row row-sm">
 								<div class="col-6">
-									<a href="#" class="btn view-btn">View Service</a>
+									<a href="{% url 'customer:service-detail' pk=object.id %}" class="btn view-btn">View Service</a>
 								</div>
 								<div class="col-6">
 									<a href="{% url 'customer:add_booking' slug=object.id %}" class="btn book-btn">Book Now</a>
@@ -100,7 +100,7 @@
 									<button data-url="{% url 'customer:add_to_cart' slug=object.slug %}" data-slug="{{object.slug}}" class="btn view-btn add-to-cart-btn" id="{{object.slug}}">Add to cart</button>
 								</div>
 								<div class="col-6">
-									<a href="#" class="btn book-btn">View</a>
+									<a href="{% url 'customer:product-detail' slug=object.slug %}" class="btn book-btn">View</a>
 								</div>
 							</div>
 						</div>

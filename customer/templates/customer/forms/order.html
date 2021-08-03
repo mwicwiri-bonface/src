@@ -82,8 +82,10 @@
 											</div>
 										</div>
 										<br/>
-										<p><b>Total</b> Ksh.{{order.get_cart_total|floatformat:2|intcomma}}</p>
-										<a href="{% url 'customer:checkout' %}" class="btn btn-primary">Proceed to checkout</a>
+										{% if object_list %}
+											<p><b>Total</b> Ksh.{{order.get_cart_total|floatformat:2|intcomma}}</p>
+											<a href="{% url 'customer:checkout' %}" class="btn btn-primary">Proceed to checkout</a>
+										{% endif %}
 									</div>
 								</div>
 								<!-- /Cart Tab -->

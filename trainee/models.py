@@ -37,6 +37,7 @@ class Training(models.Model):
     salonist = models.ForeignKey(Salonist, on_delete=models.CASCADE)
     price = models.FloatField(default=0.0)
     date = models.DateTimeField()
+    end_date = models.DateTimeField()
     is_active = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)

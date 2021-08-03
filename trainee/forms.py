@@ -39,7 +39,7 @@ class TraineeFeedbackForm(ModelForm):
 class TrainingForm(ModelForm):
     class Meta:
         model = Training
-        fields = ['service', 'price', 'date']
+        fields = ['service', 'price', 'date', 'end_date']
 
 
 class TrainingApplicationForm(ModelForm):

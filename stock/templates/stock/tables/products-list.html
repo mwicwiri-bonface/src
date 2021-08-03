@@ -40,6 +40,7 @@
 											<th>Quantity</th>
 											<th>Price</th>
 											<th>Date</th>
+											<th>Action</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -48,14 +49,15 @@
 											<td>{{forloop.counter}}</td>
 											<td>
 												<h2 class="table-avatar">
-													<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img" src="{{object.image.url}}" alt="{{object.name}}"></a>
-													<a href="#">{{object.name}}</a>
+													<a href="{% url 'stock:add_product_gallery' slug=object.slug %}" class="avatar avatar-sm mr-2"><img class="avatar-img" src="{{object.image.url}}" alt="{{object.name}}"></a>
+													<a href="{% url 'stock:add_product_gallery' slug=object.slug %}">{{object.name}}</a>
 												</h2>
 											</td>
 											<td>{{object.description}}</td>
 											<td>{{object.quantity}}</td>
 											<td>{{object.price}}</td>
 											<td>{{object.created}}</td>
+											<td><a href="{% url 'stock:add_product_gallery' slug=object.slug %}">Add gallery</a></td>
 										</tr>
 										{% endfor %}
 									</tbody>

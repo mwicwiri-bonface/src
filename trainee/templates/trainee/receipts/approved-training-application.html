@@ -1,0 +1,77 @@
+<html>
+ <head>
+   <title>Test</title>
+   <style>
+     h1 {
+        margin-bottom: 1em;
+        font-size: 1em;
+        font-weight: bold;
+        text-align: center;
+     }
+    body {
+      font-family: $helvetica;
+      color: rgba(94,93,82,1);
+    }
+     table {
+        margin-bottom: 1.5em;
+        border-spacing: 0;
+        border: 1px solid;
+        margin: 0 auto;
+        width: 100%;
+     }
+
+     th {
+       background-color: rgba(29,150,178,1);
+      border: 1px solid rgba(29,150,178,1);
+      font-weight: normal;
+      text-align: center;
+      color: white;
+     }
+     td{
+        border-left: 1px solid  rgba(29,150,178,1);
+        border-bottom: 1px solid  rgba(29,150,178,1);
+        text-align: center;
+     }
+   </style>
+ </head>
+ <body>
+   <h1>{{object.training.service.name}}</h1>
+   <table>
+     <thead>
+       <tr>
+            <th>Code</th>
+            <th>training</th>
+            <th>Approval status</th>
+            <th>Payment status</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Timestamp</th>
+        </tr>
+     </thead>
+     <tbody>
+         <tr>
+            <td>{{object.code}}</td>
+            <td>{{object.training.service.name}}</td>
+            <td>
+                {% if object.is_approved %}
+                    Approved
+                {% else %}
+                    Pending
+                {% endif %}
+            </td>
+            <td>
+                {% if object.is_paid %}
+                    Paid
+                {% else %}
+                    Not Paid
+                {% endif %}
+            </td>
+            <td>{{object.training.date}}</td>
+            <td>{{object.training.end_date}}</td>
+            <td>{{object.created}}</td>
+        </tr>
+
+     </tbody>
+   </table>
+ </body>
+</html>

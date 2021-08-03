@@ -35,31 +35,24 @@
    </style>
  </head>
  <body>
-   <h1>List of Pending Donations</h1>
+   <h1>{{object.service.name}}</h1>
    <table>
      <thead>
        <tr>
-         <th>Last Name</th>
-         <th>First Name</th>
-         <th>Donation No</th>
-         <th>Status</th>
-         <th>Mpesa Code</th>
+         <th>Booking</th>
+         <th>Customer</th>
          <th>Amount</th>
          <th>Date</th>
        </tr>
      </thead>
      <tbody>
-       {% for donation in funds %}
          <tr>
-           <td>{{donation.sponsor.last_name}}</td>
-           <td>{{donation.sponsor.first_name}}</td>
-           <td>{{donation.fund_no}}</td>
-           <td>{{donation.get_status_display}}</td>
-           <td>{{donation.mpesa_code}}</td>
-           <td>{{donation.amount}}</td>
-           <td>{{donation.timestamp}}</td>
+           <td>{{object.transaction_id}}</td>
+           <td>{{object.customer.get_full_name}}</td>
+           <td>{{object.service.price}}</td>
+           <td>{{object.created}}</td>
          </tr>
-       {% endfor %}
+
      </tbody>
    </table>
  </body>

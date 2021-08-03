@@ -26,7 +26,6 @@
 		<div class="container-fluid">
 
 			<div class="row">
-				{% include 'customer/includes/sidebar.html' %}
 
 				<div class="col-md-7 col-lg-8 col-xl-9">
 					<div class="card">
@@ -88,7 +87,8 @@
 															</td>
 															<td class="text-right">
 																<div class="table-action">
-																	<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+																	<a href="{% url 'customer:generate_order_receipt_pdf' slug=object.id %}"
+																	   class="btn btn-sm bg-primary-light">
 																		<i class="fas fa-print"></i> Print
 																	</a>
 																	{% if not object.completed %}
@@ -117,7 +117,8 @@
 													<thead>
 														<tr>
 															<th>Booking</th>
-															<th>Date </th>
+															<th>Start Time </th>
+															<th>Stop Time </th>
 															<th>Name</th>
 															<th>salonist</th>
 															<th></th>
@@ -128,6 +129,7 @@
 														<tr>
 															<td>{{object.booking.transaction_id}}</td>
 															<td>{{object.date}}</td>
+															<td>{{object.stop_date}}</td>
 															<td>{{object.booking.service.name}}</td>
 															<td>
 																<h2 class="table-avatar">
@@ -139,12 +141,13 @@
 															</td>
 															<td class="text-right">
 																<div class="table-action">
-																	<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+																	<a href="{% url 'customer:generate_appointment_receipt_pdf' slug=object.id %}"
+																	   class="btn btn-sm bg-primary-light">
 																		<i class="fas fa-print"></i> Print
 																	</a>
-																	<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
-																		<i class="far fa-eye"></i> View
-																	</a>
+<!--																	<a href="javascript:void(0);" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
 																</div>
 															</td>
 														</tr>
@@ -189,10 +192,10 @@
 															</td>
 															<td class="text-right">
 																<div class="table-action">
-																	<a href="javascript:void(0);" class="btn btn-sm bg-info-light">
-																		<i class="far fa-eye"></i> View
-																	</a>
-																	<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+<!--																	<a href="javascript:void(0);" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
+																	<a href="{% url 'customer:generate_booking_receipt_pdf' slug=object.id %}" class="btn btn-sm bg-primary-light">
 																		<i class="fas fa-print"></i> Print
 																	</a>
 																</div>
@@ -232,8 +235,7 @@
 															</td>
 															<td>{{object.mpesa}}</td>
 															<td>{{object.phone}}</td>
-															<td>{{object.amount}}</td>
-															<td>{{object.created}}</td>
+															<td>Ksh. {{object.amount|floatformat:2|intcomma}}</td>
 															<td>
 																<span class="badge badge-pill bg-success-light">
 																	{% if object.completed %}
@@ -243,12 +245,14 @@
 																	{% endif %}
 																</span>
 															</td>
+															<td>{{object.created}}</td>
 															<td class="text-right">
 																<div class="table-action">
-																	<a href="#" class="btn btn-sm bg-info-light">
-																		<i class="far fa-eye"></i> View
-																	</a>
-																	<a href="javascript:void(0);" class="btn btn-sm bg-primary-light">
+<!--																	<a href="#" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
+																	<a href="{% url 'customer:generate_booking_payment_receipt_pdf' slug=object.id %}"
+																	   class="btn btn-sm bg-primary-light">
 																		<i class="fas fa-print"></i> Print
 																	</a>
 																</div>
@@ -262,7 +266,7 @@
 															</td>
 															<td>{{object.mpesa}}</td>
 															<td>{{object.phone}}</td>
-															<td>{{object.amount}}</td>
+															<td>Ksh. {{object.amount|floatformat:2|intcomma}}</td>
 															<td>
 																<span class="badge badge-pill bg-success-light">
 																	{% if object.completed %}
@@ -275,10 +279,10 @@
 															<td>{{object.created}}</td>
 															<td class="text-right">
 																<div class="table-action">
-																	<a href="#" class="btn btn-sm bg-info-light">
-																		<i class="far fa-eye"></i> View
-																	</a>
-																	<a href="{% url 'customer:order_payment' pk=object.id %}" class="btn btn-sm bg-primary-light">
+<!--																	<a href="#" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
+																	<a href="{% url 'customer:generate_order_payment_receipt_pdf' slug=object.id %}" class="btn btn-sm bg-primary-light">
 																		<i class="fas fa-print"></i> Print
 																	</a>
 																</div>

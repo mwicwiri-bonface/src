@@ -1,20 +1,22 @@
+from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout, update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import NoReverseMatch, reverse
 from django.utils.encoding import force_text, force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
-from django.views.generic import ListView, CreateView
-
+from django.views.generic import ListView, CreateView, DetailView
+from weasyprint import HTML
 from customer.forms import CustomerSignUpForm, CustomerFeedbackForm, CustomerProfileForm, CustomerForm
 from customer.models import Customer, CustomerFeedback
+from salonist.models import Salonist, SalonistProfile
 from salonist.tokens import account_activation_token
 from service.forms import BookingPaymentForm, AppointmentForm
 from service.models import Service, Booking, Apprenticeship, BookingPayment, Appointment
@@ -64,6 +66,7 @@ class BookingListView(ListView):
         context = super().get_context_data(**kwargs)
         customer = self.request.user.customer
         context['object'] = self.object_list.filter(customer=customer, is_active=False).first()
+        context['order'] = Order.objects.filter(customer=customer, completed=False).first()
         return context
 
 
@@ -391,7 +394,10 @@ def add_to_cart(request, slug):
 def cart_list(request):
     data = {}
     order = Order.objects.filter(customer=request.user.customer, is_active=True, completed=False).first()
-    data['object_list'] = order.orderitem_set.all()
+    try:
+        data['object_list'] = order.orderitem_set.all()
+    except AttributeError:
+        pass
     data['order'] = order
     return render(request, 'customer/accounts/cart.html', data)
 
@@ -549,31 +555,37 @@ def book_hairstyle(request, service_id):
 
 def booking_payment(request, service_id):
     data = {}
-    customer = request.user.customer
-    if request.method == "POST":
-        form = BookingPaymentForm(request.POST)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            instance.booking = Booking.objects.get(id=service_id)
-            mpesa = instance.mpesa
-            if len(mpesa) == 10:
-                if instance.amount == instance.booking.service.price:
-                    if BookingPayment.objects.filter(booking=instance.booking, customer=customer).exists():
-                        instance.save()
-                        instance = instance.booking
-                        instance.is_paid = True
-                        instance.save()
-                        data['message'] = f"Hi {customer.get_full_name}, payment has been sent successfully."
+    try:
+        customer = request.user.customer
+        if request.method == "POST":
+            form = BookingPaymentForm(request.POST)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.booking = Booking.objects.get(id=service_id)
+                instance.customer = customer
+                mpesa = instance.mpesa
+                if len(mpesa) == 10:
+                    if instance.amount == instance.booking.service.price:
+                        if BookingPayment.objects.filter(booking=instance.booking, customer=customer).exists():
+                            data['info'] = f"You've already made payment for {instance.booking.transaction_id} booking"
+                        else:
+                            instance.save()
+                            instance = instance.booking
+                            instance.is_paid = True
+                            instance.is_active = True
+                            instance.save()
+                            data['message'] = f"Hi {customer.get_full_name}, payment has been sent successfully."
+                            data['url'] = reverse('customer:index')
                     else:
-                        data['info'] = f"You've already made payment for {instance.booking.transaction_id} booking"
+                        data[
+                            'info'] = f"amount sent is {instance.amount} but amount required is {instance.booking.service.price}"
                 else:
-                    data[
-                        'info'] = f"amount sent is {instance.amount} but amount required is {instance.booking.service.price}"
+                    data['mpesa'] = "Enter valid mpesa code"
             else:
-                data['mpesa'] = "Enter valid mpesa code"
-        else:
-            data['info'] = "This form is invalid"
-            data['form'] = form.errors
+                data['info'] = "This form is invalid"
+                data['form'] = form.errors
+    except NoReverseMatch:
+        pass
     return JsonResponse(data)
 
 
@@ -582,6 +594,8 @@ def booking_checkout(request):
     customer = request.user.customer
     data['object'] = Booking.objects.filter(customer=customer, is_active=False).first()
     data['form'] = BookingPaymentForm
+    order = Order.objects.filter(customer=customer, is_active=True, completed=False).first()
+    data['order'] = order
     return render(request, 'customer/forms/booking-checkout.html', data)
 
 
@@ -642,46 +656,150 @@ def add_booking(request, slug):
     return redirect('home:index')
 
 
+def appointment(request):
+    context = {'form': AppointmentForm}
+    customer = request.user.customer
+    order = Order.objects.filter(customer=customer, is_active=True, completed=False).first()
+    context['order'] = order
+    return render(request, 'customer/forms/book-appointment.html', context)
+
+
 def book_appointment(request):
     context = {}
     if request.method == "POST":
         form = AppointmentForm(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
-            case_1 = Appointment.objects.filter(date__lte=instance.date,
-                                                stop_date__gte=instance.date).exists()
-
-            # case 2: a room is booked before the requested check_out date and check_out date is after requested
-            # check_out date
-            case_2 = Appointment.objects.filter(date__lte=instance.stop_date,
-                                                stop_date__gte=instance.stop_date).exists()
-
-            case_3 = Appointment.objects.filter(date__gte=instance.date,
-                                                stop_date__lte=instance.stop_date).exists()
-            if instance.date >= instance.check_in:
-                # if either of these is true, abort and render the error
-                if case_1 or case_2 or case_3:
-                    context['info'] = f"Sorry, An appointment exists in selected dates"
+            instance.customer = request.user.customer
+            booking = instance.booking
+            service = booking.service
+            try:
+                salonist_profile = SalonistProfile.objects.filter(service=service).first()
+                salonist = salonist_profile.user
+                instance.salonist = salonist
+                case_1 = Appointment.objects.filter(salonist=salonist, date__lte=instance.date,
+                                                    stop_date__gte=instance.date).exists()
+                print(f"this is case 1 :: {case_1}")
+                case_2 = Appointment.objects.filter(salonist=salonist, date__lte=instance.stop_date,
+                                                    stop_date__gte=instance.stop_date).exists()
+                print(f"this is case 2 :: {case_2}")
+                case_3 = Appointment.objects.filter(salonist=salonist, date__gte=instance.date,
+                                                    stop_date__lte=instance.stop_date).exists()
+                print(f"this is case 3 :: {case_3}")
+                if instance.stop_date > timezone.now() and instance.date > timezone.now():
+                    if instance.stop_date > instance.date:
+                        # if either of these is true, abort and render the error
+                        if case_1 or case_2 or case_3:
+                            context['info'] = f"Sorry, An appointment exists in selected dates"
+                        else:
+                            instance.save()
+                            context['message'] = f"Appointment has been set successfully."
+                    else:
+                        context['info'] = "Sorry Stop time has to be future of Start time not past"
                 else:
-                    instance.save()
-                    context['message'] = f"Appointment has been set successfully."
-            else:
-                context['info'] = "Sorry Stop time has to be future of Start time not past"
+                    context['info'] = "selected date has to be in the future not past"
+            except AttributeError:
+                context['info'] = "Sorry No salonist Available for the booked service"
     return JsonResponse(context)
 
 
-
-def generate_pending_donation_pdf(request):
+def generate_booking_receipt_pdf(request, slug):
     """Generate pdf."""
     # Model data
-    user = request.user.id
-    fund = funds.objects.filter(sponsor_id=user, status="P").order_by('-timestamp')
+    data = {'object': Booking.objects.get(id=slug)}
     # Rendered
-    html_string = render_to_string('sponsor/pending_donation_pdf.html', {'funds': fund})
+    html_string = render_to_string('customer/receipts/booking-receipt.html', data)
     html = HTML(string=html_string)
     result = html.write_pdf()
 
     # Creating http response
     response = HttpResponse(result, content_type='application/pdf;')
-    response['Content-Disposition'] = 'inline; filename=pending_donation.pdf'
+    response['Content-Disposition'] = f"inline; filename={data['object'].customer.first_name}-" \
+                                      f"{data['object'].transaction_id}.pdf "
     return response
+
+
+def generate_appointment_receipt_pdf(request, slug):
+    """Generate pdf."""
+    # Model data
+    data = {'object': Appointment.objects.get(id=slug)}
+    # Rendered
+    html_string = render_to_string('customer/receipts/appointment-receipt.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=appointment-{data['object'].customer.first_name}-" \
+                                      f"{data['object'].booking.transaction_id}.pdf "
+    return response
+
+
+def generate_order_receipt_pdf(request, slug):
+    """Generate pdf."""
+    # Model data
+    data = {'object': Order.objects.get(id=slug)}
+    # Rendered
+    html_string = render_to_string('customer/receipts/order-receipt.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=order-{data['object'].customer.first_name}-" \
+                                      f"{data['object'].transaction_id}.pdf "
+    return response
+
+
+def generate_order_payment_receipt_pdf(request, slug):
+    """Generate pdf."""
+    # Model data
+    data = {'object': OrderPayment.objects.get(id=slug)}
+    # Rendered
+    html_string = render_to_string('customer/receipts/order-payment-receipt.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename={data['object'].customer.first_name}-" \
+                                      f"{data['object'].transaction_id}.pdf "
+    return response
+
+
+def booking_payment_receipt_pdf(request, slug):
+    """Generate pdf."""
+    # Model data
+    data = {'object': BookingPayment.objects.get(id=slug)}
+    # Rendered
+    html_string = render_to_string('customer/receipts/booking-payment-receipt.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename={data['object'].customer.first_name}-" \
+                                      f"{data['object'].booking.transaction_id}.pdf "
+    return response
+
+
+class ServiceDetailView(DetailView):
+    model = Service
+    template_name = "customer/forms/service-detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ServiceDetailView, self).get_context_data(**kwargs)
+        customer = self.request.user.customer
+        context['order'] = Order.objects.filter(customer=customer, completed=False).first()
+        return context
+
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = "customer/forms/product-detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductDetailView, self).get_context_data(**kwargs)
+        customer = self.request.user.customer
+        context['order'] = Order.objects.filter(customer=customer, completed=False).first()
+        return context

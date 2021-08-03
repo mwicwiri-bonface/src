@@ -46,9 +46,14 @@
 									<div class="text-danger">{{form.errors.price}}</div>
 								</div>
 								<div class="form-group">
-									<label>Date</label>
+									<label>Start Date</label>
 									{% render_field form.date type="datetime-local" class+="form-control"  %}
 									<div class="text-danger">{{form.errors.date}}</div>
+								</div>
+								<div class="form-group">
+									<label>End Date</label>
+									{% render_field form.end_date type="datetime-local" class+="form-control"  %}
+									<div class="text-danger">{{form.errors.end_date}}</div>
 								</div>
 								<div class="text-right">
 									<button type="submit" class="btn btn-primary">Submit</button>

@@ -1,0 +1,82 @@
+{% extends 'customer/layouts/base.html' %}
+{% load static %}
+{% block styles %}
+{% include 'home/includes/styles.html' %}
+{% endblock styles %}
+{% block content %}
+	<!-- Breadcrumb -->
+	<div class="breadcrumb-bar">
+		<div class="container-fluid">
+			<div class="row align-items-center">
+				<div class="col-md-8 col-12">
+					<nav aria-label="breadcrumb" class="page-breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'home:index' %}">Home</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Product</li>
+						</ol>
+					</nav>
+					<h2 class="breadcrumb-title">{{object.name}}</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Breadcrumb -->
+
+	<!-- Page Content -->
+	<div class="content">
+		<div class="container-fluid">
+
+			<div class="row">
+
+				<div class="col-md-12 col-lg-12 col-xl-12">
+					<!-- Product Widget -->
+					<div class="card">
+						<div class="card-body">
+							<div class="doctor-widget">
+								<div class="doc-info-left">
+									<div class="doctor-img">
+										<a href="doctor-profile.html">
+											<img src="{{object.image.url}}" class="img-fluid" alt="{{object.name}}" style="height: 200px; object-fit: cover;">
+										</a>
+									</div>
+									<div class="doc-info-cont">
+										<h4 class="doc-name"><a href="doctor-profile.html">{{object.name}}</a></h4>
+										<p class="doc-speciality">{{object.description}}</p>
+										<div class="clinic-details">
+											<ul class="clinic-gallery">
+												{% for object in object.gallery_set.all %}
+												<li>
+													<a href="{{object.image.url}}" data-fancybox="gallery">
+														<img src="{{object.image.url}}" alt="Feature">
+													</a>
+												</li>
+												{% endfor %}
+											</ul>
+										</div>
+									</div>
+								</div>
+								<div class="doc-info-right">
+									<div class="clinic-booking">
+										<button data-url="{% url 'customer:add_to_cart' slug=object.slug %}" data-slug="{{object.slug}}" id="{{object.slug}}"class="apt-btn add-to-cart-btn">Add to cart</button>
+										<a class="apt-btn" href="{% url 'customer:add_to_wishlist' slug=object.slug %}">Add to Wishlist</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /Product Widget -->
+<!--					<div class="load-more text-center">-->
+<!--						<a class="btn btn-primary btn-sm" href="javascript:void(0);">Load More</a>-->
+<!--					</div>-->
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	<!-- /Page Content -->
+{% endblock content %}
+{% block scripts %}
+{% include 'home/includes/scripts.html' %}
+<script src="{% static 'customer/assets/js/custom.js' %}"></script>
+{% endblock scripts %}

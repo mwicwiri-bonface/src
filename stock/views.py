@@ -5,8 +5,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.db.models import Sum, Q
+from django.forms import inlineformset_factory
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.urls import NoReverseMatch
 from django.utils.encoding import force_bytes, force_text
@@ -19,8 +20,8 @@ from salonist.models import Salonist
 from service.models import Appointment, BookingPayment, Service
 from stock.forms import StockProfileForm, StockForm, StockSignUpForm, StockFeedbackForm
 from stock.models import Stock, StockFeedback
-from store.forms import ProductForm
-from store.models import Product
+from store.forms import ProductForm, GalleryForm
+from store.models import Product, Gallery
 from user.decorators import stock_required
 from user.models import CustomUser
 
@@ -135,7 +136,7 @@ class Home(ListView):
         context['pending_products_progress'] = int((context['pending_products_count'] / context['products'].count())
                                                    * 100)
         context['stock_out_products_progress'] = int((context['stock_out_products_count'] / context['products'].count())
-                                                   * 100)
+                                                     * 100)
         context['products'] = self.object_list.filter(quantity__gte=1)
         return context
 
@@ -246,3 +247,22 @@ def search(request):
     context['services'] = services
     context['q'] = q
     return render(request, 'stock/search.html', context)
+
+
+def add_product_gallery(request, slug):
+    context = {}
+    product = get_object_or_404(Product, slug=slug)
+    product_formset = inlineformset_factory(Product, Gallery, form=GalleryForm, extra=1, max_num=6)
+    formset = product_formset(instance=product)
+    if request.method == 'POST':
+        formset = product_formset(request.POST, request.FILES, instance=product)
+        if formset.is_valid():
+            for form in formset:
+                if form.is_valid():
+                    instance = form.save(commit=False)
+                    instance.product = product
+                    instance.save()
+                    messages.success(request, f"{product.name} gallery has been saved successfully.")
+    context['object'] = product
+    context['formset'] = formset
+    return render(request, 'stock/forms/create-gallery.html', context)

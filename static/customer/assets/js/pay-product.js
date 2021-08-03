@@ -27,9 +27,15 @@ $(document).ready(function() {
                             message: response['message'],
                             position: 'topRight'
                           });
-                         setTimeout(function () {
+                        if (response['url']){
+                            setTimeout(function () {
+                         location.href = response['url']
+                        }, 5200);
+                        } else {
+                        setTimeout(function () {
                          location.reload()
                         }, 5200);
+                        }
                         }
                          if(response['mpesa']) {
                            $("#error-mpesa").html(response['mpesa']);
