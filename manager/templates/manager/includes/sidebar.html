@@ -37,10 +37,18 @@
                     </ul>
                 </li>
                 <li class="submenu">
-                    <a href="#"><i class="fe fe-book"></i> <span>Apprenticeship </span> <span class="menu-arrow"></span></a>
+                    <a href="#"><i class="fe fe-book"></i> <span>Trainings </span> <span class="menu-arrow"></span></a>
                     <ul style="display: none;">
-                        <li><a href="{% url 'manager:create_apprenticeship' %}">Add Apprenticeship </a></li>
-                        <li><a href="{% url 'manager:apprenticeships' %}">Apprenticeship List</a></li>
+                        <li><a href="{% url 'manager:add_training' %}">Add Training </a></li>
+                        <li><a href="{% url 'manager:pending_manager_training' %}">Pending Training</a></li>
+                        <li><a href="{% url 'manager:manager_training' %}">Training </a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-book"></i> <span>Trainings Application</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'manager:manager_pending_training_application' %}">Pending Training Application</a></li>
+                        <li><a href="{% url 'manager:manager_training_application' %}">Training Application </a></li>
                     </ul>
                 </li>
                 <li class="submenu">

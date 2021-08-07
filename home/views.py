@@ -49,6 +49,15 @@ def privacy_policy(request):
     return render(request, "home/privacy-policy.html", {'order': order})
 
 
+def about_us(request):
+    if request.user.is_authenticated and request.user.is_customer:
+        customer = request.user.customer
+        order = Order.objects.filter(customer=customer, is_active=True, completed=False).first()
+    else:
+        order = {}
+    return render(request, "home/about-us.html", {'order': order})
+
+
 def search(request):
     q = request.GET.get('search')
     services = Service.objects.filter(

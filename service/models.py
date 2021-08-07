@@ -41,6 +41,7 @@ class BookingPayment(models.Model):
     manager = models.ForeignKey(Finance, on_delete=models.CASCADE, null=True)
     amount = models.FloatField(default=0.0)
     confirmed = models.BooleanField(default=False, help_text="Means manager has confirmed payment")
+    completed = models.BooleanField(default=False, help_text="Means customer completed payment")
     updated = models.DateTimeField(_('Updated'), auto_now=True, null=True)
     created = models.DateTimeField(_('Created'), auto_now_add=True, null=True)
 

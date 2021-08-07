@@ -5,14 +5,16 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import send_mail
 from django.db.models import Sum, Q
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import NoReverseMatch
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 from django.views.generic import ListView, CreateView
+from weasyprint import HTML
 
 from customer.models import Customer
 from manager.forms import ManagerProfileForm, ManagerForm, ManagerSignUpForm, ManagerFeedbackForm
@@ -24,6 +26,8 @@ from service.forms import ServiceForm, ApprenticeshipForm, SalonistServiceForm
 from service.models import Appointment, BookingPayment, Service, Apprenticeship, SalonistService
 from store.forms import ProductForm
 from store.models import Product
+from trainee.forms import TrainingForm
+from trainee.models import Training, TrainingApplication
 from user.decorators import manager_required
 from user.models import CustomUser
 
@@ -188,13 +192,15 @@ class Home(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['salonists_count'] = Salonist.objects.filter(is_active=True).count()
+        context['salonists_per'] = int((context['salonists_count'] / Salonist.objects.all().count()) * 100)
         context['salonists'] = Salonist.objects.filter(is_active=True)
-        context['customers_count'] = Customer.objects.filter(is_active=True).count()
-        context['customers'] = Customer.objects.filter(is_active=True)
-        context['appointment_count'] = Appointment.objects.all().count()
+        context['customers'] = Customer.objects.all()
+        context['customers_count'] = context['customers'].filter(is_active=True).count()
+        context['customers_per'] = int((context['customers_count'] / context['customers'].count()) * 100)
         context['appointments'] = Appointment.objects.all()
+        context['appointment_count'] = context['appointments'].filter(stop_date__gt=timezone.now()).count()
+        context['appointment_per'] = int((context['appointment_count'] / context['appointments'].count()) * 100)
         context['total_amount'] = BookingPayment.objects.all().aggregate(Sum('amount')).get('amount__sum', 0.00)
-        # amounts = list(BookingPayment.objects.all().values_list('amount', Flat=True))
         return context
 
 
@@ -463,3 +469,182 @@ def search(request):
     context['services'] = services
     context['q'] = q
     return render(request, 'manager/search.html', context)
+
+
+class TrainingCreateView(CreateView):
+    form_class = TrainingForm
+    template_name = "manager/forms/training-create.html"
+
+    def get_form_kwargs(self):
+        kwargs = super(TrainingCreateView, self).get_form_kwargs()
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_invalid(self, form):
+        context = {
+            'info': "Please correct errors below",
+            'form': form,
+        }
+        return render(self.request, self.template_name, context)
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.salonist = self.request.user.salonist
+        if Training.objects.filter(salonist=instance.salonist, service=instance.service,
+                                   price=instance.price, is_active=False).exists():
+            messages.info(self.request, f"Active {instance.service} already exists.")
+        else:
+            instance.save()
+            messages.success(self.request, f"Training for {instance.service.name} has been added successfully.")
+        return redirect('manager:add_training')
+
+
+class TrainingListView(ListView):
+    model = Training
+    template_name = "manager/tables/training-list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(TrainingListView, self).get_context_data(**kwargs)
+        context['object_list'] = self.object_list.all()
+        return context
+
+
+class PendingTrainingListView(ListView):
+    model = Training
+    template_name = "manager/tables/pending-training-list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(PendingTrainingListView, self).get_context_data(**kwargs)
+        context['object_list'] = self.object_list.filter(is_active=False)
+        return context
+
+
+class ApprovedTrainingApplicationListView(ListView):
+    model = TrainingApplication
+    template_name = "manager/tables/approved-training-application-list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ApprovedTrainingApplicationListView, self).get_context_data(**kwargs)
+        context['object_list'] = self.object_list.filter(is_approved=True)
+        return context
+
+
+class PendingTrainingApplicationListView(ListView):
+    model = TrainingApplication
+    template_name = "manager/tables/pending-training-application-list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(PendingTrainingApplicationListView, self).get_context_data(**kwargs)
+        context['object_list'] = self.object_list.filter(is_approved=False)
+        return context
+
+
+def confirm_training_application(request, application_id):
+    data = {}
+    if TrainingApplication.objects.filter(id=application_id, is_approved=False).exists():
+        training_application = TrainingApplication.objects.get(id=application_id)
+        training = training_application.training
+        training_application.is_approved = True
+        training_application.save()
+        data['message'] = f"{training_application.trainee.get_full_name} :: application ::" \
+                          f" {training_application.code} for Training {training.service.name} has been approved."
+    else:
+        data['info'] = f"Selected application does not exists."
+    return JsonResponse(data)
+
+
+def approved_training_application_pdf(request):
+    """Generate pdf."""
+    # Model data
+    data = {'object_list': TrainingApplication.objects.filter(is_approved=True)}
+    # Rendered
+    html_string = render_to_string('manager/receipts/approved_training_application.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=approved-training-applications.pdf "
+    return response
+
+
+def pending_training_application_pdf(request):
+    """Generate pdf."""
+    # Model data
+    data = {'object_list': TrainingApplication.objects.filter(is_approved=False)}
+    # Rendered
+    html_string = render_to_string('manager/receipts/pending_training_application.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=pending-training-applications.pdf "
+    return response
+
+
+def pending_training_pdf(request):
+    """Generate pdf."""
+    # Model data
+    data = {'object_list': Training.objects.filter(is_active=False)}
+    # Rendered
+    html_string = render_to_string('manager/receipts/pending_training.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=pending-training.pdf "
+    return response
+
+
+def training_pdf(request):
+    """Generate pdf."""
+    # Model data
+    data = {'object_list': Training.objects.all()}
+    # Rendered
+    html_string = render_to_string('manager/receipts/training.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=training.pdf "
+    return response
+
+
+def salonists_pdf(request):
+    """Generate pdf."""
+    # Model data
+    data = {'object_list': Salonist.objects.all()}
+    # Rendered
+    html_string = render_to_string('manager/receipts/salonists.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=salonists.pdf "
+    return response
+
+
+def products_pdf(request):
+    """Generate pdf."""
+    # Model data
+    data = {'object_list': Product.objects.all()}
+    # Rendered
+    html_string = render_to_string('manager/receipts/products.html', data)
+    html = HTML(string=html_string)
+    result = html.write_pdf()
+
+    # Creating http response
+    response = HttpResponse(result, content_type='application/pdf;')
+    response['Content-Disposition'] = f"inline; filename=products.pdf "
+    return response
+

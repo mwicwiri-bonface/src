@@ -565,7 +565,7 @@ def booking_payment(request, service_id):
                 instance.customer = customer
                 mpesa = instance.mpesa
                 if len(mpesa) == 10:
-                    if instance.amount == instance.booking.service.price:
+                    if instance.amount >= (instance.booking.service.price / 2):
                         if BookingPayment.objects.filter(booking=instance.booking, customer=customer).exists():
                             data['info'] = f"You've already made payment for {instance.booking.transaction_id} booking"
                         else:
@@ -589,11 +589,52 @@ def booking_payment(request, service_id):
     return JsonResponse(data)
 
 
+def complete_booking_payment(request, payment_id):
+    data = {}
+    try:
+        customer = request.user.customer
+        if request.method == "POST":
+            payment = BookingPayment.objects.get(id=payment_id)
+            form = BookingPaymentForm(request.POST, instance=payment)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                mpesa = instance.mpesa
+                if len(mpesa) == 10:
+                    if instance.amount == (instance.booking.service.price - payment.amount):
+                        instance.completed = True
+                        instance.save()
+                        data['message'] = f"Hi {customer.get_full_name}, payment has been sent successfully."
+                        data['url'] = reverse('customer:index')
+                    else:
+                        data[
+                            'info'] = f"amount sent is {instance.amount} but amount required is " \
+                                      f"{(instance.booking.service.price - payment.amount)}"
+                else:
+                    data['mpesa'] = "Enter valid mpesa code"
+            else:
+                data['info'] = "This form is invalid"
+                data['form'] = form.errors
+    except NoReverseMatch:
+        pass
+    return JsonResponse(data)
+
+
 def booking_checkout(request):
     data = {}
     customer = request.user.customer
     data['object'] = Booking.objects.filter(customer=customer, is_active=False).first()
     data['form'] = BookingPaymentForm
+    order = Order.objects.filter(customer=customer, is_active=True, completed=False).first()
+    data['order'] = order
+    return render(request, 'customer/forms/booking-checkout.html', data)
+
+
+def complete_booking_checkout(request, payment_id):
+    data = {}
+    customer = request.user.customer
+    payment = BookingPayment.objects.get(id=payment_id)
+    data['object'] = Booking.objects.filter(customer=customer, is_active=False).first()
+    data['form'] = BookingPaymentForm(instance=payment)
     order = Order.objects.filter(customer=customer, is_active=True, completed=False).first()
     data['order'] = order
     return render(request, 'customer/forms/booking-checkout.html', data)

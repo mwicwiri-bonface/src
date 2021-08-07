@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
         <title>{% block title %}{% endblock title %}</title>
         {% include 'manager/includes/styles.html' %}
+        {% include 'includes/csrftoken.html' %}
     </head>
     <body>
 
@@ -18,5 +19,6 @@
         </div>
 		<!-- /Main Wrapper -->
         {% include 'manager/includes/scripts.html' %}
+        {% block scripts %}{% endblock %}
     </body>
 </html>

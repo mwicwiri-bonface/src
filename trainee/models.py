@@ -39,6 +39,7 @@ class Training(models.Model):
     date = models.DateTimeField()
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=False)
+    ended = models.BooleanField(default=False)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 

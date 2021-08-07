@@ -1,6 +1,7 @@
 {% extends 'manager/layout/base.html' %}
 {% load static %}
-{% block title %}Products List{% endblock title %}
+{% load humanize %}
+{% block title %}Trainings List{% endblock title %}
 {% include 'manager/includes/data-table-styles.html' %}
 {% include 'manager/includes/header.html' %}
 {% include 'manager/includes/sidebar.html' %}
@@ -14,11 +15,11 @@
 			<div class="page-header">
 				<div class="row">
 					<div class="col-sm-12">
-						<h3 class="page-title">List of Products <a href="{% url 'manager:products_pdf' %}" class="text-align-right" style="text-align: right;"> <i class="fe fe-print"> Generate pdf</i></a></h3>
+						<h3 class="page-title">List of Training <a href="{% url 'manager:training_pdf' %}" class="text-align-right" style="text-align: right;"> <i class="fe fe-print"> Generate pdf</i></a></h3>
 						<ul class="breadcrumb">
 							<li class="breadcrumb-item"><a href="{% url 'manager:index' %}">Dashboard</a></li>
-							<li class="breadcrumb-item"><a href="javascript:(0);">Users</a></li>
-							<li class="breadcrumb-item active">product</li>
+							<li class="breadcrumb-item"><a href="javascript:(0);">Training</a></li>
+							<li class="breadcrumb-item active">Training</li>
 						</ul>
 					</div>
 				</div>
@@ -35,27 +36,32 @@
 									<thead>
 										<tr>
 											<th>#</th>
-											<th>product Name</th>
-											<th>Description</th>
-											<th>Quantity</th>
-											<th>Price</th>
-											<th>Date</th>
+											<th>service</th>
+											<th>salonist</th>
+											<th>price</th>
+											<th>start date</th>
+											<th>end date</th>
+											<th>status</th>
 										</tr>
 									</thead>
 									<tbody>
 										{% for object in object_list %}
 										<tr>
 											<td>{{forloop.counter}}</td>
+											<td>{{object.service.name}}</td>
+											<td>{{object.salonist.get_full_name}}</td>
+											<td>Ksh {{object.price|floatformat:2|intcomma}}</td>
+											<td>{{object.date}}</td>
+											<td>{{object.end_date}}</td>
 											<td>
-												<h2 class="table-avatar">
-													<a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img" src="{{object.image.url}}" alt="{{object.name}}"></a>
-													<a href="#">{{object.name}}</a>
-												</h2>
+												{% if object.is_active and not object.ended %}
+													Ongoing
+												{% elif not object.is_active and object.ended %}
+													Ended
+												{% else %}
+													Pending
+												{% endif %}
 											</td>
-											<td>{{object.description}}</td>
-											<td>{{object.quantity}}</td>
-											<td>{{object.price}}</td>
-											<td>{{object.created}}</td>
 										</tr>
 										{% endfor %}
 									</tbody>
@@ -66,7 +72,6 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 	</div>
 	<!-- /Page Wrapper -->

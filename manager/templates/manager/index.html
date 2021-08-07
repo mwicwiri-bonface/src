@@ -1,5 +1,6 @@
 {% extends 'manager/layout/base.html' %}
 {% load static %}
+{% load humanize %}
 {% block title %}Home{% endblock title %}
 {% block content %}
 <!-- Page Wrapper -->
@@ -35,7 +36,7 @@
 						<div class="dash-widget-info">
 							<h6 class="text-muted">Salonists</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-primary w-50"></div>
+								<div class="progress-bar bg-primary w-{{salonists_per}}"></div>
 							</div>
 						</div>
 					</div>
@@ -46,7 +47,7 @@
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-success">
-								<i class="fe fe-credit-card"></i>
+								<i class="fe fe-users"></i>
 							</span>
 							<div class="dash-count">
 								<h3>{{customers_count}}</h3>
@@ -56,7 +57,7 @@
 
 							<h6 class="text-muted">Customers</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-success w-50"></div>
+								<div class="progress-bar bg-success w-{{customers_per}}"></div>
 							</div>
 						</div>
 					</div>
@@ -67,7 +68,7 @@
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-danger border-danger">
-								<i class="fe fe-money"></i>
+								<i class="fe fe-calendar"></i>
 							</span>
 							<div class="dash-count">
 								<h3>{{appointment_count}}</h3>
@@ -77,7 +78,7 @@
 
 							<h6 class="text-muted">Appointment</h6>
 							<div class="progress progress-sm">
-								<div class="progress-bar bg-danger w-50"></div>
+								<div class="progress-bar bg-danger w-{{appointment_per}}"></div>
 							</div>
 						</div>
 					</div>
@@ -88,10 +89,10 @@
 					<div class="card-body">
 						<div class="dash-widget-header">
 							<span class="dash-widget-icon text-warning border-warning">
-								<i class="fe fe-folder"></i>
+								<i class="fe fe-money"></i>
 							</span>
 							<div class="dash-count">
-								<h3>Ksh {{total_amount}}</h3>
+								<h3>Ksh {{total_amount|floatformat:2|intcomma}}</h3>
 							</div>
 						</div>
 						<div class="dash-widget-info">
