@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% load static %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+        <title>{% block title %}{% endblock title %}</title>
+        {% include 'stock/includes/styles.html' %}
+    </head>
+    <body>
+
+		<!-- Main Wrapper -->
+        <div class="main-wrapper">
+            {% include 'stock/includes/header.html' %}
+            {% include 'stock/includes/sidebar.html' %}
+			{% block content %}{% endblock content %}
+
+        </div>
+		<!-- /Main Wrapper -->
+        {% include 'stock/includes/scripts.html' %}
+    </body>
+</html>

@@ -1,0 +1,78 @@
+<html>
+ <head>
+   <title>Test</title>
+   {% load humanize %}
+   <style>
+     h1 {
+        margin-bottom: 1em;
+        font-size: 1em;
+        font-weight: bold;
+        text-align: center;
+     }
+    body {
+      font-family: $helvetica;
+      color: rgba(94,93,82,1);
+    }
+     table {
+        margin-bottom: 1.5em;
+        border-spacing: 0;
+        border: 1px solid;
+        margin: 0 auto;
+        width: 100%;
+     }
+
+     th {
+       background-color: rgba(29,150,178,1);
+      border: 1px solid rgba(29,150,178,1);
+      font-weight: normal;
+      text-align: center;
+      color: white;
+     }
+     td{
+        border-left: 1px solid  rgba(29,150,178,1);
+        border-bottom: 1px solid  rgba(29,150,178,1);
+        text-align: center;
+     }
+   </style>
+ </head>
+ <body>
+   <h1>Salonists</h1>
+   <table>
+     <thead>
+        <tr>
+            <th>#</th>
+            <th>salonist Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+     </thead>
+     <tbody>
+         {% for object in object_list %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>
+                    <h2 class="table-avatar">
+                        <a href="#" class="avatar avatar-sm mr-2"><img class="avatar-img rounded-circle" src="{{object.salonistprofile.image.url}}" alt="{{object.get_full_name}}"></a>
+                        <a href="#">{{object.get_full_name}}</a>
+                    </h2>
+                </td>
+                <td>{{object.email}}</td>
+                <td>{{object.salonistprofile.phone_number}}</td>
+                <td>
+                    {% if object.is_active and not object.is_archived and object.is_verified %}
+                    Active
+                    {% elif object.is_active and object.is_archived and object.is_verified %}
+                    Archived
+                    {% elif object.is_active and not object.is_archived and not object.is_verified %}
+                    Unverified
+                    {% endif %}
+                </td>
+                <td>{{object.created}}</td>
+            </tr>
+         {% endfor %}
+     </tbody>
+   </table>
+ </body>
+</html>

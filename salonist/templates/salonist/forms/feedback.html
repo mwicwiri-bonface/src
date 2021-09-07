@@ -1,0 +1,61 @@
+{% extends 'salonist/layout/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Feedback{% endblock title %}
+{% include 'salonist/includes/form-styles.html' %}
+{% include 'salonist/includes/header.html' %}
+{% include 'salonist/includes/sidebar.html' %}
+{% block content %}
+	<!-- Page Wrapper -->
+	<div class="page-wrapper">
+
+		<div class="content container-fluid">
+
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="row">
+					<div class="col">
+						<h3 class="page-title">Feedback</h3>
+						<ul class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'salonist:index' %}">Dashboard</a></li>
+							<li class="breadcrumb-item active">Feedback</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Header -->
+
+			<div class="row">
+				<div class="col-md-12">
+					{% include 'includes/messages.html' %}
+					<div class="card">
+						<div class="card-header">
+							<h4 class="card-title">Feedback</h4>
+						</div>
+						<div class="card-body">
+							<form action="." method="post" enctype="multipart/form-data">
+								{% csrf_token %}
+								<div class="form-group">
+									<label>subject</label>
+										{{form.subject|add_class:"form-control"}}
+									<div class="text-danger" id="error-subject">{{form.errors.subject}}</div>
+								</div>
+								<div class="form-group">
+									<label>message</label>
+									{{form.message|add_class:"form-control"}}
+									<div class="text-danger" id="error-message">{{form.errors.message}}</div>
+								</div>
+								<div class="text-right">
+									<button type="submit" class="btn btn-primary">Submit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Wrapper -->
+
+{% endblock content %}
+{% include 'salonist/includes/form-scripts.html' %}

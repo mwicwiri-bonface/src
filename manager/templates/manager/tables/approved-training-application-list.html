@@ -1,0 +1,82 @@
+{% extends 'manager/layout/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}Trainings List{% endblock title %}
+{% include 'manager/includes/data-table-styles.html' %}
+{% include 'manager/includes/header.html' %}
+{% include 'manager/includes/sidebar.html' %}
+{% block content %}
+
+	<!-- Page Wrapper -->
+	<div class="page-wrapper">
+		<div class="content container-fluid">
+
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="row">
+					<div class="col-sm-12">
+						<h3 class="page-title">List of Training Applications <a href="{% url 'manager:approved_training_application_pdf' %}" class="text-align-right" style="text-align: right;"> <i class="fe fe-print"> Generate pdf</i></a></h3>
+						<ul class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'manager:index' %}">Dashboard</a></li>
+							<li class="breadcrumb-item"><a href="javascript:(0);">Training Applications</a></li>
+							<li class="breadcrumb-item active">Training Applications</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Header -->
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="card">
+						<div class="card-body">
+							<div class="table-responsive">
+								<div class="table-responsive">
+								<table class="datatable table table-hover table-center mb-0">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>code</th>
+											<th>service</th>
+											<th>salonist</th>
+											<th>Trainee</th>
+											<th>price</th>
+											<th>start date</th>
+											<th>end date</th>
+											<th>status</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for object in object_list %}
+										<tr>
+											<td>{{forloop.counter}}</td>
+											<td>{{object.code}}</td>
+											<td>{{object.training.service.name}}</td>
+											<td>{{object.training.salonist.get_full_name}}</td>
+											<td>{{object.trainee.get_full_name}}</td>
+											<td>Ksh {{object.training.price|floatformat:2|intcomma}}</td>
+											<td>{{object.training.date}}</td>
+											<td>{{object.training.end_date}}</td>
+											<td>
+												{% if object.is_approved %}
+													Approved
+												{% else %}
+													Pending
+												{% endif %}
+											</td>
+										</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Wrapper -->
+
+{% endblock content %}
+{% include 'manager/includes/data-table-scripts.html' %}

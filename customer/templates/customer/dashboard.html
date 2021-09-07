@@ -1,0 +1,313 @@
+{% extends 'customer/layouts/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block content %}
+			
+	<!-- Breadcrumb -->
+	<div class="breadcrumb-bar">
+		<div class="container-fluid">
+			<div class="row align-items-center">
+				<div class="col-md-12 col-12">
+					<nav aria-label="breadcrumb" class="page-breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'customer:index' %}">Home</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+						</ol>
+					</nav>
+					<h2 class="breadcrumb-title">Dashboard</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Breadcrumb -->
+
+	<!-- Page Content -->
+	<div class="content">
+		<div class="container-fluid">
+
+			<div class="row">
+
+				<div class="col-md-7 col-lg-8 col-xl-9">
+					<div class="card">
+						<div class="card-body pt-0">
+
+							<!-- Tab Menu -->
+							<nav class="user-tabs mb-4">
+								<ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+									<li class="nav-item">
+										<a class="nav-link active" href="#pat_order" data-toggle="tab">Order</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#pat_appointments" data-toggle="tab">Appointments</a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#pat_bookings" data-toggle="tab"><span class="med-records">Bookings</span></a>
+									</li>
+									<li class="nav-item">
+										<a class="nav-link" href="#pat_transactions" data-toggle="tab">Transactions</a>
+									</li>
+								</ul>
+							</nav>
+							<!-- /Tab Menu -->
+
+							<!-- Tab Content -->
+							<div class="tab-content pt-0">
+
+								<!-- Appointment Tab -->
+								<div id="pat_order" class="tab-pane fade show active">
+									<div class="card card-table mb-0">
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover table-center mb-0">
+													<thead>
+														<tr>
+															<th>Order Id</th>
+															<th>Total</th>
+															<th>Items</th>
+															<th>Status</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													{% for object in orders %}
+														<tr>
+															<td>
+																{{object.transaction_id}}
+															</td>
+															<td>Ksh. {{object.get_cart_total|floatformat:2|intcomma}}</td>
+															<td>{{object.get_cart_items}}</td>
+															<td>
+																<span class="badge badge-pill bg-success-light">
+																	{% if object.completed %}
+																		Confirm
+																	{% else %}
+																		Ongoing
+																	{% endif %}
+																</span>
+															</td>
+															<td class="text-right">
+																<div class="table-action">
+																	<a href="{% url 'customer:generate_order_receipt_pdf' slug=object.id %}"
+																	   class="btn btn-sm bg-primary-light">
+																		<i class="fas fa-print"></i> Print
+																	</a>
+																	{% if not object.completed %}
+																		<a href="{% url 'customer:cart_list' %}" class="btn btn-sm bg-info-light">
+																			<i class="far fa-eye"></i> View
+																		</a>
+																	{% endif %}
+																</div>
+															</td>
+														</tr>
+													{% endfor %}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /Appointment Tab -->
+
+								<!-- Prescription Tab -->
+								<div class="tab-pane fade" id="pat_appointments">
+									<div class="card card-table mb-0">
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover table-center mb-0">
+													<thead>
+														<tr>
+															<th>Booking</th>
+															<th>Start Time </th>
+															<th>Stop Time </th>
+															<th>Name</th>
+															<th>salonist</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													{% for object in appointments %}
+														<tr>
+															<td>{{object.booking.transaction_id}}</td>
+															<td>{{object.date}}</td>
+															<td>{{object.stop_date}}</td>
+															<td>{{object.booking.service.name}}</td>
+															<td>
+																<h2 class="table-avatar">
+																	<a href="#" class="avatar avatar-sm mr-2">
+																		<img class="avatar-img rounded-circle" src="{{object.salonist.salonistprofile.image.url}}" alt="User Image">
+																	</a>
+																	<a href="#">{{object.salonist.get_full_name}}</a>
+																</h2>
+															</td>
+															<td class="text-right">
+																<div class="table-action">
+																	<a href="{% url 'customer:generate_appointment_receipt_pdf' slug=object.id %}"
+																	   class="btn btn-sm bg-primary-light">
+																		<i class="fas fa-print"></i> Print
+																	</a>
+<!--																	<a href="javascript:void(0);" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
+																</div>
+															</td>
+														</tr>
+													{% endfor %}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /Prescription Tab -->
+
+								<!-- Medical Records Tab -->
+								<div id="pat_bookings" class="tab-pane fade">
+									<div class="card card-table mb-0">
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover table-center mb-0">
+													<thead>
+														<tr>
+															<th>Booking</th>
+															<th>service name </th>
+															<th>service Description</th>
+															<th>Price</th>
+															<th>image</th>
+															<th>Action</th>
+														</tr>
+													</thead>
+													<tbody>
+													{% for object in bookings %}
+														<tr>
+															<td><a href="javascript:void(0);">{{object.transaction_id}}</a></td>
+															<td>{{object.service.name}}</td>
+															<td>{{object.service.description}}</td>
+															<td>Ksh.{{object.service.price|floatformat:2|intcomma}}</td>
+															<td>
+																<h2 class="table-avatar">
+																	<a href="#" class="avatar avatar-sm mr-2">
+																		<img class="avatar-img" src="{{object.service.image.url}}" alt="User Image">
+																	</a>
+																</h2>
+															</td>
+															<td class="text-right">
+																<div class="table-action">
+<!--																	<a href="javascript:void(0);" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
+																	<a href="{% url 'customer:generate_booking_receipt_pdf' slug=object.id %}" class="btn btn-sm bg-primary-light">
+																		<i class="fas fa-print"></i> Print
+																	</a>
+																</div>
+															</td>
+														</tr>
+													{% endfor %}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /Medical Records Tab -->
+
+								<!-- Billing Tab -->
+								<div id="pat_transactions" class="tab-pane fade">
+									<div class="card card-table mb-0">
+										<div class="card-body">
+											<div class="table-responsive">
+												<table class="table table-hover table-center mb-0">
+													<thead>
+														<tr>
+															<th>Invoice No</th>
+															<th>mpesa</th>
+															<th>phone</th>
+															<th>Amount</th>
+															<th>Status</th>
+															<th>Paid On</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													{% for object in booking_transactions %}
+														<tr>
+															<td>
+																{{object.booking.transaction_id}}
+															</td>
+															<td>{{object.mpesa}}</td>
+															<td>{{object.phone}}</td>
+															<td>Ksh. {{object.amount|floatformat:2|intcomma}}</td>
+															<td>
+																<span class="badge badge-pill bg-success-light">
+																	{% if object.completed %}
+																		Confirm
+																	{% else %}
+																		Ongoing
+																	{% endif %}
+																</span>
+															</td>
+															<td>{{object.created}}</td>
+															<td class="text-right">
+																<div class="table-action">
+<!--																	<a href="#" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
+																	<a href="{% url 'customer:generate_booking_payment_receipt_pdf' slug=object.id %}"
+																	   class="btn btn-sm bg-primary-light">
+																		<i class="fas fa-print"></i> Print
+																	</a>
+																</div>
+															</td>
+														</tr>
+													{% endfor %}
+													{% for object in order_transactions %}
+														<tr>
+															<td>
+																{{object.order.transaction_id}}
+															</td>
+															<td>{{object.mpesa}}</td>
+															<td>{{object.phone}}</td>
+															<td>Ksh. {{object.amount|floatformat:2|intcomma}}</td>
+															<td>
+																<span class="badge badge-pill bg-success-light">
+																	{% if object.completed %}
+																		Confirm
+																	{% else %}
+																		Ongoing
+																	{% endif %}
+																</span>
+															</td>
+															<td>{{object.created}}</td>
+															<td class="text-right">
+																<div class="table-action">
+<!--																	<a href="#" class="btn btn-sm bg-info-light">-->
+<!--																		<i class="far fa-eye"></i> View-->
+<!--																	</a>-->
+																	<a href="{% url 'customer:generate_order_payment_receipt_pdf' slug=object.id %}" class="btn btn-sm bg-primary-light">
+																		<i class="fas fa-print"></i> Print
+																	</a>
+																</div>
+															</td>
+														</tr>
+													{% endfor %}
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /Billing Tab -->
+
+							</div>
+							<!-- Tab Content -->
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+	<!-- /Page Content -->
+
+{% endblock content %}

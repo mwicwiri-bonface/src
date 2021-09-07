@@ -1,0 +1,57 @@
+{% load static %}
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+                <li class="menu-title">
+                    <span>Main</span>
+                </li>
+                <li class="active">
+                    <a href="{% url 'finance:index' %}"><i class="fe fe-desktop"></i> <span>Dashboard</span></a>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-layout"></i> <span>Orders </span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'finance:pending_order_payment' %}">Pending payment</a></li>
+                        <li><a href="{% url 'finance:order_payment' %}">Payments</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-users"></i> <span>Bookings</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'finance:pending_booking_payment' %}">Pending payment</a></li>
+                        <li><a href="{% url 'finance:booking_payment' %}">Payments</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-layout"></i> <span>Trainings</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'finance:pending_payment' %}">Pending payment</a></li>
+                        <li><a href="{% url 'finance:payment' %}">Payments</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0);"><i class="fe fe-lock"></i> <span>Accounts</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li>
+                            <a href="{% url 'finance:password_change' %}"> <span>Change Password</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'finance:profile_main' %}"> <span>Profile</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0);"><i class="fe fe-info"></i> <span>Help</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li>
+                            <a href="{% url 'finance:feedback' %}"> <span>Feedback</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /Sidebar -->

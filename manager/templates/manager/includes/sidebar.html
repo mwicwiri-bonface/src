@@ -1,0 +1,77 @@
+{% load static %}
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-inner slimscroll">
+        <div id="sidebar-menu" class="sidebar-menu">
+            <ul>
+                <li class="menu-title">
+                    <span>Main</span>
+                </li>
+                <li class="active">
+                    <a href="{% url 'manager:index' %}"><i class="fe fe-desktop"></i> <span>Dashboard</span></a>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-layout"></i> <span>Products </span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'manager:create_product' %}">Add Product</a></li>
+                        <li><a href="{% url 'manager:products' %}">Products List</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-users"></i> <span>Salonists </span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'manager:create_salonist' %}">Add Salonist</a></li>
+                        <li><a href="{% url 'manager:salonists' %}">Salonist List</a></li>
+                        <li><a href="{% url 'manager:create_salonist_service' %}">Assign Task</a></li>
+                        <li><a href="{% url 'manager:salonist_service_list' %}">Assigned Tasks List</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="{% url 'manager:customers' %}"><i class="fe fe-user"></i> <span>Customers</span></a>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-activity"></i> <span>Services </span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'manager:create_service' %}">Add Service</a></li>
+                        <li><a href="{% url 'manager:services' %}">Service List</a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-book"></i> <span>Trainings </span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'manager:add_training' %}">Add Training </a></li>
+                        <li><a href="{% url 'manager:pending_manager_training' %}">Pending Training</a></li>
+                        <li><a href="{% url 'manager:manager_training' %}">Training </a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-book"></i> <span>Trainings Application</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{% url 'manager:manager_pending_training_application' %}">Pending Training Application</a></li>
+                        <li><a href="{% url 'manager:manager_training_application' %}">Training Application </a></li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0);"><i class="fe fe-lock"></i> <span>Accounts</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li>
+                            <a href="{% url 'manager:password_change' %}"> <span>Change Password</span></a>
+                        </li>
+                        <li>
+                            <a href="{% url 'manager:profile_main' %}"> <span>Profile</span></a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="submenu">
+                    <a href="javascript:void(0);"><i class="fe fe-info"></i> <span>Help</span> <span class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li>
+                            <a href="{% url 'manager:feedback' %}"> <span>Feedback</span></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /Sidebar -->

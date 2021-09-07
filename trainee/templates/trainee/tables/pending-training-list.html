@@ -1,0 +1,89 @@
+{% extends 'trainee/layout/base.html' %}
+{% load static %}
+{% block title %}Pending Training List{% endblock title %}
+{% include 'trainee/includes/data-table-styles.html' %}
+{% include 'trainee/includes/header.html' %}
+{% include 'trainee/includes/sidebar.html' %}
+{% block content %}
+
+	<!-- Page Wrapper -->
+	<div class="page-wrapper">
+		<div class="content container-fluid">
+
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="row">
+					<div class="col-sm-12">
+						<h3 class="page-title">List of Pending Training</h3>
+						<ul class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'trainee:index' %}">Dashboard</a></li>
+							<li class="breadcrumb-item"><a href="javascript:(0);">Users</a></li>
+							<li class="breadcrumb-item active">training</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Header -->
+
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="card">
+						<div class="card-body">
+							<div class="table-responsive">
+								<div class="table-responsive">
+								<table class="datatable table table-hover table-center mb-0">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>Code</th>
+											<th>training</th>
+											<th>Approval status</th>
+											<th>Payment status</th>
+											<th>Date</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody>
+										{% for object in object_list %}
+											<tr>
+												<td>{{forloop.counter}}</td>
+												<td>{{object.code}}</td>
+												<td>{{object.training.service.name}}</td>
+												<td>
+													{% if object.is_approved %}
+														Approved
+													{% else %}
+														Pending
+													{% endif %}
+												</td>
+												<td>
+													{% if object.is_paid %}
+														Paid
+													{% else %}
+														Not Paid
+													{% endif %}
+												</td>
+												<td>{{object.training.date}}</td>
+												<td>
+													<a href="{% url 'trainee:approved_training_application_receipt_pdf' slug=object.id%}"
+													   class="text-align-right" style="text-align: right;">
+														<i class="fe fe-print"> Print</i>
+													</a>
+												</td>
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<!-- /Page Wrapper -->
+
+{% endblock content %}
+{% include 'trainee/includes/data-table-scripts.html' %}

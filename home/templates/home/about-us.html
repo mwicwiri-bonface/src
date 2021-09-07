@@ -1,0 +1,47 @@
+{% extends 'customer/layouts/base.html' %}
+{% load static %}
+{% block content %}
+	<!-- Breadcrumb -->
+	<div class="breadcrumb-bar">
+		<div class="container-fluid">
+			<div class="row align-items-center">
+				<div class="col-md-12 col-12">
+					<nav aria-label="breadcrumb" class="page-breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'home:index' %}">Home</a></li>
+							<li class="breadcrumb-item active" aria-current="page">About US</li>
+						</ol>
+					</nav>
+					<h2 class="breadcrumb-title">About Us</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Breadcrumb -->
+	<!-- Page Content -->
+	<div class="content">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<div class="terms-content">
+						<div class="terms-text">
+							<h3>About Us</h3>
+							<p>
+Welcome to a lifetime experience! Ashleys Beauty Center is a hair care and beauty services provider that has provided first class beauty care solutions to Kenyans. Ashleys Kenya Limited has been revolutionizing the beauty industry by offering top quality services through Ashleys Beauty Centres, Ashleys Academies and Ashleys Cosmetics Shops.</p>
+						<p>At Ashleys, we offer you more than a service and it is always our pleasure to give you a stunning look that will turn heads wherever you go.</p>
+						<p>We offer the following – micro weaving, spa pedicure and manicure, detox, hair bonding, track and saw, braiding, bridal services, body massage and treatments, spa services, facials, reflexology, barbering for the executive man, locks, texturing and styling for males and females, nails – acrylics and gel, fixing eye lashes, and color. We break our back mending yours.</p>
+
+						</div>
+						<div class="terms-text">
+							<h3>Our Vision and Mission</h3>
+							<p>Our Vision and Mission is to revolutionize the beauty industry in terms of professionalism by making hairdressing and beauty a profession of choice not a last resort and empower the youth by creating job opportunities as we serve throughout Kenya, regionally and internationally.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- /Page Content -->
+
+{% endblock content %}

@@ -1,0 +1,81 @@
+{% extends 'manager/layout/base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Adding Product{% endblock title %}
+{% include 'manager/includes/form-styles.html' %}
+{% include 'manager/includes/header.html' %}
+{% include 'manager/includes/sidebar.html' %}
+{% block content %}
+	<!-- Page Wrapper -->
+	<div class="page-wrapper">
+
+		<div class="content container-fluid">
+
+			<!-- Page Header -->
+			<div class="page-header">
+				<div class="row">
+					<div class="col">
+						<h3 class="page-title">Add Product</h3>
+						<ul class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'manager:index' %}">Dashboard</a></li>
+							<li class="breadcrumb-item active">Add Product</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- /Page Header -->
+
+			<div class="row">
+				<div class="col-md-12">
+					{% include 'includes/messages.html' %}
+					<div class="card">
+						<div class="card-header">
+							<h4 class="card-title">Adding Product</h4>
+						</div>
+						<div class="card-body">
+							<form action="." method="post" enctype="multipart/form-data">
+								{% csrf_token %}
+								<div class="form-group">
+									<label>Name</label>
+									{{ form.name|add_class:"form-control" }}
+									<div class="text-danger">{{form.errors.name}}</div>
+								</div>
+								<div class="form-group">
+									<label>description</label>
+									{{ form.description|add_class:"form-control" }}
+									<div class="text-danger">{{form.errors.description}}</div>
+								</div>
+								<div class="form-group">
+									<label>price</label>
+									{{ form.price|add_class:"form-control" }}
+									<div class="text-danger">{{form.errors.price}}</div>
+								</div>
+								<div class="form-group">
+									<label>image</label>
+									{{ form.image|add_class:"form-control" }}
+									<div class="text-danger">{{form.errors.image}}</div>
+								</div>
+								<div class="form-group">
+									<label>discount</label>
+									{{ form.discount|add_class:"form-control" }}
+									<div class="text-danger">{{form.errors.discount}}</div>
+								</div>
+								<div class="form-group">
+									<label>quantity</label>
+									{{ form.quantity|add_class:"form-control" }}
+									<div class="text-danger">{{form.errors.quantity}}</div>
+								</div>
+								<div class="text-right">
+									<button type="submit" class="btn btn-primary">Submit</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Page Wrapper -->
+
+{% endblock content %}
+{% include 'manager/includes/form-scripts.html' %}
